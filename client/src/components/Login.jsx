@@ -20,9 +20,8 @@ const Login = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        userdata,
-        { withCredentials: true }
+        "http://localhost:5000/api/user/login",
+        userdata
       );
       setUser(response.data.user);
       navigate("/travel-preferences");

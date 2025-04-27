@@ -1,8 +1,43 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
 import { PlanContext } from "../components/TripContext";
+import { useParams } from "react-router-dom";
 
 const TripPlanDisplay = () => {
-  const { tripPlan } = useContext(PlanContext);
+  const { tripId } = useParams(); // Get the tripId from URL params
+  const { tripPlan, setTripPlan } = useContext(PlanContext); // Assuming you have a context that holds trip plan data
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTripDetails = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please log in first.");
+        navigate("/login"); // or redirect to login
+        return;
+      }
+      setLoading(true);
+
+      try {
+        const response = await axios.get(`/api/trip/${tripId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setTripPlan(response.data); // Set the tripPlan data to the context or state
+      } catch (error) {
+        console.error("Error fetching trip details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTripDetails();
+  }, [tripId, setTripPlan]); // Re-fetch if tripId changes
+
+  if (loading) {
+    return <p className="text-center text-gray-500">Loading trip details...</p>;
+  }
 
   if (!tripPlan) {
     return <p className="text-center text-gray-500">No trip data available.</p>;

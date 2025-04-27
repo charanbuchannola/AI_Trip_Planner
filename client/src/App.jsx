@@ -18,7 +18,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/travel-preferences" element={<TravelPreferencesForm />} />
-        <Route path="/trip-display" element={<TripPlanDisplay />} />
+        <Route path="/trip-display/:tripId" element={<TripPlanDisplay />} />
       </Routes>
     </>
   );

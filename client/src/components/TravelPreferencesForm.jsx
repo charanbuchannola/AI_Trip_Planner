@@ -2,48 +2,54 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { PlanContext } from "../components/TripContext";
 import { useNavigate } from "react-router-dom";
-
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-import {
-  AI_PROMPT,
-  SelectBudgetOptions,
-  SelectTravelsList,
-} from "../constants/Options";
-import { chatSession } from "./AIModal";
+import { SelectBudgetOptions, SelectTravelsList } from "../constants/Options";
 import Loader from "../components/Loader";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
+
 const TravelPreferencesForm = () => {
   const [destination, setDestination] = useState("");
   const [days, setDays] = useState("");
   const [budget, setBudget] = useState("");
   const [travelGroup, setTravelGroup] = useState("");
   const [errors, setErrors] = useState({});
-  const [formdata, setFormData] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const { tripPlan, setTripPlan } = useContext(PlanContext);
+  const { setTripPlan } = useContext(PlanContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuthStatus = async () => {
+      const token = localStorage.getItem("token");
+      console.log(`token: ${token}`);
+      if (!token) {
+        alert("Please log in first.");
+        navigate("/login"); // or redirect to login
+        return;
+      }
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/auth/check-auth",
-          { withCredentials: true }
+          "http://localhost:5000/api/user/check-auth",
+          {
+            headers: {
+              Authorization: `bearer ${token}`,
+            },
+          }
         );
         if (response.status === 200) {
           setIsAuthenticated(true);
         }
       } catch (error) {
-        alert("Please log in to generate a trip.");
-        setIsAuthenticated(false);
+        console.error("Authentication error:", error.response || error.message);
+        alert("Authentication failed. Please log in again.");
+        navigate("/login");
       }
     };
 
     checkAuthStatus();
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,13 +58,6 @@ const TravelPreferencesForm = () => {
       return;
     }
 
-    setFormData((prev) => [
-      ...prev,
-      { destination, days, budget, travelGroup },
-    ]);
-    console.log(formdata);
-
-    // Validate all fields
     const newErrors = {};
     if (!destination) newErrors.destination = "Destination is required.";
     if (!days) newErrors.days = "Number of days is required.";
@@ -72,42 +71,49 @@ const TravelPreferencesForm = () => {
     }
 
     if (parseInt(days, 10) > 7) {
-      alert(
-        "Maximum number of days exceeded! Please choose a shorter trip of atmost 7 days."
-      );
+      alert("Maximum number of days exceeded! Please choose at most 7 days.");
       return;
     }
 
     setErrors({});
-    setLoading(true); // Start loading
-
-    const FINAL_PROMPT = AI_PROMPT.replace("{location}", destination)
-      .replace("{totalDays}", days)
-      .replace("{traveler}", travelGroup)
-      .replace("{budget}", budget)
-      .replace("{totaldays}", days);
-
-    console.log(FINAL_PROMPT);
-
-    // const result = await chatSession.sendMessage(FINAL_PROMPT);
-    // console.log(result?.response?.text());
+    setLoading(true);
 
     try {
-      const result = await chatSession.sendMessage(FINAL_PROMPT);
-      const jsonResponse = JSON.parse(result?.response?.text());
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:5000/api/tripplan/createtrip",
+        {
+          destination,
+          days,
+          budget,
+          travelGroup,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      // Save the trip plan in context
-      console.log(jsonResponse);
-      setTripPlan(jsonResponse);
+      const tripData = response.data.trip;
+      // console.log(tripData);
 
-      navigate("/trip-display");
+      // setTripPlan(tripData); // Save trip to context
+      // navigate("/trip-display");
+
+      const tripId = response.data.trip._id;
+      navigate(`/trip-display/${tripId}`);
     } catch (error) {
-      console.error("Failed to generate trip plan:", error);
+      console.error("Failed to create trip:", error);
+      alert(
+        error?.response?.data?.message ||
+          "Failed to create trip. Please try again."
+      );
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
 
-    // Clear form fields
+    // Reset form
     setDestination("");
     setDays("");
     setBudget("");
@@ -135,9 +141,10 @@ const TravelPreferencesForm = () => {
         <Loader />
       ) : (
         <form onSubmit={handleSubmit}>
+          {/* Destination */}
           <div className="mb-6">
             <label className="block text-gray-700 mb-2" htmlFor="destination">
-              What is your destination of choice?
+              Destination
             </label>
             <GooglePlacesAutocomplete
               apiKey={API_KEY}
@@ -150,9 +157,11 @@ const TravelPreferencesForm = () => {
               <p className="text-red-500 text-sm mt-1">{errors.destination}</p>
             )}
           </div>
+
+          {/* Days */}
           <div className="mb-6">
             <label className="block text-gray-700 mb-2" htmlFor="days">
-              How many days are you planning your trip?
+              Number of Days
             </label>
             <input
               type="number"
@@ -169,60 +178,60 @@ const TravelPreferencesForm = () => {
               <p className="text-red-500 text-sm mt-1">{errors.days}</p>
             )}
           </div>
+
+          {/* Budget */}
           <div className="mb-6">
-            <p className="block text-gray-700 mb-2">What is your Budget?</p>
+            <p className="block text-gray-700 mb-2">Your Budget</p>
             <div className="grid grid-cols-3 gap-4">
               {SelectBudgetOptions.map((option) => (
                 <div
                   key={option.id}
                   onClick={() => handleCardClick("budget", option.value)}
-                  className={`p-4 cursor-pointer rounded-lg border transition-all transform duration-300 ease-in-out 
-        ${
-          budget === option.value
-            ? "bg-blue-100 scale-105 border-blue-500 shadow-lg"
-            : "bg-white hover:scale-105 hover:shadow-md"
-        }`}
+                  className={`p-4 cursor-pointer rounded-lg border ${
+                    budget === option.value
+                      ? "bg-blue-100 scale-105 border-blue-500 shadow-lg"
+                      : "bg-white hover:scale-105 hover:shadow-md"
+                  }`}
                 >
                   <p className="text-center text-2xl">{option.icon}</p>
                   <h3 className="text-center font-medium mt-2">
                     {option.label}
                   </h3>
-                  <p className="text-center text-gray-500 text-sm">
-                    {option.description}
-                  </p>
                 </div>
               ))}
             </div>
+            {errors.budget && (
+              <p className="text-red-500 text-sm mt-1">{errors.budget}</p>
+            )}
           </div>
 
+          {/* Travel Group */}
           <div className="mb-6">
-            <p className="block text-gray-700 mb-2">
-              Who do you plan on traveling with on your next adventure?
-            </p>
+            <p className="block text-gray-700 mb-2">Travel Group</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {SelectTravelsList.map((option) => (
                 <div
                   key={option.id}
                   onClick={() => handleCardClick("travelGroup", option.value)}
-                  className={`p-4 cursor-pointer rounded-lg border transition-all transform duration-300 ease-in-out 
-        ${
-          travelGroup === option.value
-            ? "bg-blue-100 scale-105 border-blue-500 shadow-lg"
-            : "bg-white hover:scale-105 hover:shadow-md"
-        }`}
+                  className={`p-4 cursor-pointer rounded-lg border ${
+                    travelGroup === option.value
+                      ? "bg-blue-100 scale-105 border-blue-500 shadow-lg"
+                      : "bg-white hover:scale-105 hover:shadow-md"
+                  }`}
                 >
                   <p className="text-center text-2xl">{option.icon}</p>
                   <h3 className="text-center font-medium mt-2">
                     {option.label}
                   </h3>
-                  <p className="text-center text-gray-500 text-sm">
-                    {option.description}
-                  </p>
                 </div>
               ))}
             </div>
+            {errors.travelGroup && (
+              <p className="text-red-500 text-sm mt-1">{errors.travelGroup}</p>
+            )}
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"

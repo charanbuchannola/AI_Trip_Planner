@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cookie = require("cookie-parser");
 
-module.exports.register = async (req, res) => {
+module.exports.registerController = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const hashPassword = await bcrypt.hash(password, 10);
@@ -14,47 +14,51 @@ module.exports.register = async (req, res) => {
       password: hashPassword,
     });
     console.log(user);
-    // res.redirect("http://localhost:5173/login");
-    res.status(201).json({ message: "Registration successful" });
+
+    const token = jwt.sign(
+      { id: user._id, name: user.username },
+      process.env.JWT_TOKEN
+    );
+
+    res.status(200).json({ token, user });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
-module.exports.login = async (req, res) => {
+module.exports.loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    if (!email) {
+      return res.status(400).json({ message: "email is required" });
+    }
+    if (!password) {
+      return res.status(400).json({ message: "password is required" });
+    }
     const user = await userModel.findOne({ email });
 
     if (!user) {
-      return res.redirect("http://localhost:5173/login");
+      return res.status(404).json({ message: "User not found" });
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.redirect("http://localhost:5173/login");
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+    const token = jwt.sign(
+      { id: user._id, name: user.username },
+      process.env.JWT_TOKEN
+    );
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_TOKEN);
-
-    res.cookie("Token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-    });
-
-    // console.log(token);
-
-    // res.redirect("http://localhost:5173/travel-preferences");
-    res.status(200).json({ message: "Logged in successfully" });
+    res.status(200).json({ token, user });
   } catch (error) {
-    res.redirect("/user/login");
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
-module.exports.logout = (req, res) => {
+module.exports.logoutController = (req, res) => {
   res
     .clearCookie("token")
     .status(200)

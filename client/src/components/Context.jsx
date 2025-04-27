@@ -6,8 +6,12 @@ const Context = ({ children }) => {
   const checkAuth = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/auth/check-auth",
-        { withCredentials: true }
+        "http://localhost:5000/api/user/check-auth",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       setUser({ id: response.data.userId });
     } catch (error) {
