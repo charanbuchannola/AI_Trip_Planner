@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { PlanContext } from "../components/TripContext";
 import { useParams, useNavigate } from "react-router-dom";
+=======
+import React, { useContext } from "react";
+import { PlanContext } from "./context/TripContext";
+>>>>>>> c84318e807efb74080d9d63b364399447fb6ab5d
 
 const TripPlanDisplay = () => {
   const { tripId } = useParams();
