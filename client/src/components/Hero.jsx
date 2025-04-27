@@ -1,15 +1,16 @@
 
-import { useState } from 'react'
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
+import SplitText from './ui/ReactBIt/SplitText';
 
 
 
 export default function Hero() {
-
+  const containerRef = useRef(null);
   return (
-    <div className="">
+    <div  className=" w-full h-screen overflow-x-hidden">
     
-      <div className="relative isolate px-6  lg:px-8">
+      <div className="relative isolate px-6 mt-auto py-24 sm:py-32  lg:px-8">
        
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-20">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
@@ -21,13 +22,17 @@ export default function Hero() {
               </Link>
             </div>
           </div>
-          <div className="text-center">
-            <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
-            Discover Your Next Adventure with AI:
-            </h1>
+          <div ref={containerRef} className="text-center relative">
+       
+            {/*  Split text is shiny text*/}
+            <SplitText
+ text=" Your Next Adventure with AI" disabled={false} speed={3} className='custom-class text-5xl font-bold tracking-tight  text-gray-900 sm:text-6xl' />
+  
             <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
-            Your personal trip planner and travel curator, creating custom
-        itineraries tailored to your interests and budget.
+         
+        <SplitText
+ text="   Your personal trip planner and travel curator, creating custom
+        itineraries tailored to your interests and budget." disabled={false} speed={3} className='custom-class ' />
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link

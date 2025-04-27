@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import React, { useContext, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import { AuthContext } from "../components/Context";
-import VariableProximity from "./ui/ReactBIt/VariableProximity";
+import { AuthContext } from "./context/Context";
+import SplitText from "./ui/ReactBIt/SplitText";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -45,32 +45,28 @@ export default function Register() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full lg:w-1/2 bg-white/60 backdrop-blur-md h-full shadow-2xl p-8 sm:p-10 md:p-12"
+          className="w-full lg:w-1/2    backdrop-blur-md h-full shadow-2xl p-8 sm:p-10 md:p-12"
         >
           <div
             className="text-4xl font-bold text-center text-blue-700 mb-2"
             ref={containerRef}
             style={{ position: 'relative' }}
           >
-            <VariableProximity
-              label={"Create Account"}
-              className={"variable-proximity-demo"}
-              fromFontVariationSettings="'wght' 400, 'opsz' 9"
-              toFontVariationSettings="'wght' 1000, 'opsz' 40"
-              containerRef={containerRef}
-              radius={100}
-              falloff="linear"
-            />
+           <SplitText
+  text="Create Your Account"
+  className="text-2xl font-semibold text-center custom-class"
+  disabled={false} speed={3}  
+/>
           </div>
 
-          <p className="text-center text-gray-600 mb-4">
+          <p className="text-center  mb-4">
             Sign up to get started!
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Username */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium  mb-1">
                 Username
               </label>
               <input
@@ -85,7 +81,7 @@ export default function Register() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium  mb-1">
                 Email Address
               </label>
               <input
@@ -100,7 +96,7 @@ export default function Register() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium  mb-1">
                 Password
               </label>
               <input
@@ -122,7 +118,7 @@ export default function Register() {
             </button>
 
             {/* Login Link */}
-            <p className="text-center text-gray-600 text-sm ">
+            <p className="text-center  text-sm ">
               Already have an account?{" "}
               <Link to="/login" className="text-blue-600 font-semibold hover:underline">
                 Login here

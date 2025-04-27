@@ -8,19 +8,23 @@ import Hero from "./components/Hero";
 import TravelPreferencesForm from "./components/TravelPreferencesForm";
 import TripPlanDisplay from "./components/TripPlanDisplay";
 import LoginForm from "./components/LoginForm";
+import { useTheme } from "./components/context/ThemeContext";
+import Themes from "./components/Themes/Themes";
 
 const App = () => {
+  const { theme } = useTheme();
   return (
-    <>
+    <div data-theme={theme} className="w-screen h-screen">
       <Navbar />
       <Routes>
         <Route path="/" element={<Hero />} />
+        <Route path="/themes" element={<Themes />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/travel-preferences" element={<TravelPreferencesForm />} />
         <Route path="/trip-display" element={<TripPlanDisplay />} />
       </Routes>
-    </>
+    </div>
   );
 };
 
