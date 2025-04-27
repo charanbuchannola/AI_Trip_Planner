@@ -32,7 +32,7 @@ export default function Hero() {
     }
   ];
   return (
-    <div  className=" w-full md:flex justify-center items-center h-screen overflow-x-hidden">
+    <div  className=" w-full md:flex justify-center items-center h-screen overflow-hidden">
     
       <div className="relative isolate px-6 mt-auto py-24 sm:py-32  lg:px-8">
        
