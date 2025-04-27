@@ -34,7 +34,7 @@ const TravelPreferencesForm = () => {
           "http://localhost:5000/api/user/check-auth",
           {
             headers: {
-              Authorization: `bearer ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );

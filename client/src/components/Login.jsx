@@ -24,6 +24,8 @@ const Login = () => {
         userdata
       );
       setUser(response.data.user);
+
+      localStorage.setItem("token", response.data.token);
       navigate("/travel-preferences");
     } catch (error) {
       console.error(

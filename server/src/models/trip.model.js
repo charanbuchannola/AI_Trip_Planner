@@ -19,12 +19,12 @@ const tripSchema = new mongoose.Schema(
     },
     budget: {
       type: String,
-      enum: ["low", "medium", "high"],
+      enum: ["cheap", "moderate", "luxary"],
       required: true,
     },
     travelGroup: {
       type: String,
-      enum: ["solo", "family", "friends", "couple"],
+      enum: ["just_me", "couple", "friends", "family"],
       required: true,
     },
 
