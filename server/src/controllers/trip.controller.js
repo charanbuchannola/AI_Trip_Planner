@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const tripModel = require("../models/trip.model");
 const userModel = require("../models/user.model");
 const { chatSession } = require("../utils/AIModal"); // your AI integration
@@ -44,6 +45,8 @@ module.exports.createTrip = async (req, res) => {
 
     // Redirect to the trip details page after creation
     return res.redirect(`/api/tripplan/${trip._id}`);
+
+    // return res.status(201).json({ tripId: trip._id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to generate trip" });
@@ -52,8 +55,16 @@ module.exports.createTrip = async (req, res) => {
 
 module.exports.getTrip = async (req, res) => {
   try {
-    const { tripId } = req.params; // Get the tripId from the URL params
+    let { tripId } = req.params; // Get the tripId from the URL params
     const userId = req.user._id; // Assuming authentication middleware is in place
+
+    // 🛠 FIXED: Clean tripId if it accidentally contains ":" or bad characters
+    tripId = tripId.replace(":", "");
+
+    // 🛠 Check if tripId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(tripId)) {
+      return res.status(400).json({ message: "Invalid trip ID" });
+    }
 
     // Find the trip by tripId
     const trip = await tripModel.findById(tripId);

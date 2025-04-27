@@ -102,6 +102,7 @@ const TravelPreferencesForm = () => {
       // navigate("/trip-display");
 
       const tripId = response.data.trip._id;
+      console.log(`tripId after tipform submit: ${tripId}`);
       navigate(`/trip-display/${tripId}`);
     } catch (error) {
       console.error("Failed to create trip:", error);
