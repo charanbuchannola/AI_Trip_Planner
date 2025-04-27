@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { LogOut, Settings, User } from "lucide-react"; // Import icons
+import { Home, LogIn, LogOut, Moon, PlaneTakeoff, Settings, ThermometerSun, User } from "lucide-react"; // Import icons
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,25 +28,32 @@ export default function Navbar() {
           {/* Logo Section */}
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
-              <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                {/* Logo Placeholder */}
+              <div className="size-9 rounded-lg  flex items-center justify-center">
+              <PlaneTakeoff className="text-primary-300" />
               </div>
-              <h1 className="text-lg font-bold">Ai Trip Planner</h1>
+              <h1 className="text-2xl font-bold">Ai Trip Planner</h1>
             </Link>
           </div>
 
           {/* Button Section */}
           <div className="flex items-center gap-2">
+
+          <Link to="/" className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl btn-ghost gap-2 transition-colors">
+              <Home className="text-primary-300" />
+              <span className="hidden sm:inline">Home</span>
+            </Link> 
             <Link to="/themes" className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl btn-ghost gap-2 transition-colors">
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Settings</span>
+              <Moon className="text-primary-300" />
+              <span className="hidden sm:inline">Themes</span>
             </Link>
+        
+           
 
             {isAuthenticated ? (
               <>
                 {/* Profile Link */}
                 <Link to="/profile" className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl btn-ghost gap-2">
-                  <User className="w-5 h-5" />
+                  <User className=" text-primary-300" />
                   <span className="hidden sm:inline">Profile</span>
                 </Link>
 
@@ -62,7 +69,8 @@ export default function Navbar() {
             ) : (
               // Show Login button if not authenticated
               <Link to="/login" className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl btn-ghost">
-                Login
+                 <LogIn className=" text-primary-300" />
+                 <span className="hidden sm:inline ">Login</span>
               </Link>
             )}
           </div>

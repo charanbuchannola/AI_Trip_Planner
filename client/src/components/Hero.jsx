@@ -2,23 +2,65 @@
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import SplitText from './ui/ReactBIt/SplitText';
+import RotatingText from './ui/ReactBIt/RotatingText';
+import InfiniteMenu from './ui/ReactBIt/InfiniteMenu ';
+
 
 
 
 export default function Hero() {
   const containerRef = useRef(null);
+
+  const items = [
+    {
+      image: '/images/item1.jpg',
+      link: '/travel-preferences',
+      title: 'Explore the Streets of Paris',
+      description: 'Discover hidden cafes, iconic landmarks, and romantic boulevards in the City of Light.'
+    },
+    {
+      image: '/images/item2.jpg',
+      link: '/travel-preferences',
+      title: 'Adventure Across the Swiss Alps',
+      description: 'Experience breathtaking hikes, cozy mountain villages, and snow-capped wonders.'
+    },
+    {
+      image: '/images/item3.jpg',
+      link: '/travel-preferences',
+      title: 'Relax on Bali’s Serene Beaches',
+      description: 'Unwind with crystal-clear waters, lush jungles, and vibrant local culture in paradise'
+    }
+  ];
   return (
-    <div  className=" w-full h-screen overflow-x-hidden">
+    <div  className=" w-full md:flex justify-center items-center h-screen overflow-x-hidden">
     
       <div className="relative isolate px-6 mt-auto py-24 sm:py-32  lg:px-8">
        
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-20">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-            Personalized Itineraries at Your Fingertips.{' '}
-              <Link to="#" className="font-semibold text-indigo-600">
-                <span aria-hidden="true" className="absolute inset-0" />
-                Read more <span aria-hidden="true">&rarr;</span>
+            <div className="relative flex items-center bg-primary/10 rounded-full px-3 py-1 text-sm/6  ring-1 ring-primary-900/10 hover:ring-primary-900/20">
+           
+       
+              <Link to="/travel-preferences" className="font-semibold ">
+              <RotatingText
+  texts={[ 'Personalized Travel Itineraries for You',
+    'AI-Powered Trip Planning Made Simple',
+    'Custom Travel Plans at Your Fingertips',
+    'Effortless Trip Planning with AI',
+    'Smart Travel Itineraries Tailored for You',
+    'Plan Your Next Adventure with AI',
+    'Discover New Places with Smart Itineraries',
+    'Explore the World with AI Assistance',
+    'Travel Plans Designed Just for You']}
+  mainClassName=" text-primary-800 overflow-hidden min-w-base py-0.5 justify-center rounded-lg"
+  staggerFrom={"last"}
+  initial={{ y: "100%" }}
+  animate={{ y: 0 }}
+  exit={{ y: "-120%" }}
+  splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+  transition={{ type: "spring", damping: 30, stiffness: 400 }}
+  rotationInterval={2000}
+/>
               </Link>
             </div>
           </div>
@@ -41,7 +83,7 @@ export default function Hero() {
               >
                 Get started
               </Link>
-              <Link to="#" className="text-sm/6 font-semibold text-gray-900">
+              <Link to="#" className=" btn text-sm/6 font-semibold  ">
                 Learn more <span aria-hidden="true">→</span>
               </Link>
             </div>
@@ -49,19 +91,17 @@ export default function Hero() {
         </div>
 
         
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-        >
-          <div
-            style={{
-              clipPath:
-                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-            }}
-            className="relative left-[calc(50%+3rem)] aspect-1155/678 w-[36.125rem] -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
-          />
+        
+      </div>
+
+      {/* image section */}
+      <div className='relative  overflow-hidden  px-6 mt-auto py-24 sm:py-32  lg:px-8'>
+        {/* <img src="https://i.pinimg.com/736x/22/74/3e/22743e1e11d14dcea3cdd0c048cdcb43.jpg" alt="hero" className=" h-[70vh] w-full rounded-full object-cover object-center opacity-50" />
+         */}
          
-        </div>
+<div style={{ height: '600px', position: 'relative' }}>
+  <InfiniteMenu items={items}/>
+</div>
       </div>
     </div>
   )
