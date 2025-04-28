@@ -1,7 +1,7 @@
 const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const cookie = require("cookie-parser");
+
 
 module.exports.registerController = async (req, res) => {
   try {

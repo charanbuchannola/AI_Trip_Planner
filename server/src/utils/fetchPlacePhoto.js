@@ -1,11 +1,13 @@
 const axios = require("axios");
 
+const FALLBACK_IMAGE_URL = "https://via.placeholder.com/400x300?text=No+Image"; // 🛠️ You can replace this with any custom fallback URL
+
 module.exports.fetchPlacePhoto = async function (placeName) {
   try {
     const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
       console.error("GOOGLE_API_KEY is missing");
-      return null;
+      return FALLBACK_IMAGE_URL;
     }
 
     console.log("Fetching photo for:", placeName);
@@ -30,13 +32,13 @@ module.exports.fetchPlacePhoto = async function (placeName) {
       console.log("Photo Response Headers:", photoResponse.headers);
 
       const finalImageUrl = photoResponse.headers.location;
-      return finalImageUrl || null;
+      return finalImageUrl || FALLBACK_IMAGE_URL; // 🛠️ fallback if no image found
     } else {
       console.warn(`No photo found for: ${placeName}`);
-      return null;
+      return FALLBACK_IMAGE_URL;
     }
   } catch (error) {
     console.error("Error fetching place photo:", error.message);
-    return null;
+    return FALLBACK_IMAGE_URL;
   }
 };

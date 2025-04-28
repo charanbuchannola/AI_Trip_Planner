@@ -7,7 +7,8 @@ const tripPlanRoutes = require("./routes/tripPlanRoutes.js");
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5000"], // Add all allowed frontend origins here
+    origin: "http://localhost:5173", // Add all allowed frontend origins here
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );

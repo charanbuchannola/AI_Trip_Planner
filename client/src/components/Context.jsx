@@ -11,6 +11,7 @@ const Context = ({ children }) => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
+  
         }
       );
       setUser({ id: response.data.userId });

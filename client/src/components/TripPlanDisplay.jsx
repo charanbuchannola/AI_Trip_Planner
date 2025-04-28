@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { PlanContext } from "../components/TripContext";
+
 import { useParams, useNavigate } from "react-router-dom";
 
 const TripPlanDisplay = () => {

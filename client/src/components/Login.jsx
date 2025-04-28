@@ -1,37 +1,30 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+
 import { useNavigate, Link } from "react-router-dom";
-import { AuthContext } from "../components/Context";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const { setUser } = useContext(AuthContext);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const userdata = {
+      email,
+      password,
+    };
     try {
-      const userdata = {
-        email,
-        password,
-      };
-
-      const response = await axios.post(
-        "http://localhost:5000/api/user/login",
-        userdata
-      );
-      setUser(response.data.user);
-
-      localStorage.setItem("token", response.data.token);
-      navigate("/travel-preferences");
-    } catch (error) {
-      console.error(
-        "Login failed:",
-        error.response?.data?.error || error.message
-      );
+      const res = await axios.post("http://localhost:5000/api/user/login", userdata, {
+        withCredentials: true, // Include credentials for cookies if needed
+      });
+      console.log("Login successful:", res);
+      localStorage.setItem("token", res.data.token);
+      navigate("/feed");
+    } catch (err) {
+      console.error("Login failed:", err.response?.data?.message || err.message);
+      alert(err.response?.data?.message || "Login failed. Please try again.");
     }
   };
 
