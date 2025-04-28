@@ -24,8 +24,8 @@ const App = () => {
         <Route path="/themes" element={<Themes />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route path="/travel-preferences" element={<TravelPreferencesForm />} />
-        {/* <Route path="/travel-preferences" element={<EnhancedTravelForm />} /> */}
+        {/* <Route path="/travel-preferences" element={<TravelPreferencesForm />} /> */}
+        <Route path="/travel-preferences" element={<EnhancedTravelForm />} />
         <Route path="/trip-display" element={<TripPlanDisplay />} />
       </Routes>
     </div>

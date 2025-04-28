@@ -14,7 +14,7 @@ export default function Navbar() {
     } else {
       setIsAuthenticated(false); // User is not authenticated
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove token from localStorage on logout

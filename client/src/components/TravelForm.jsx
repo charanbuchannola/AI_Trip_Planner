@@ -1,60 +1,103 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Plane, Wallet, Users, MapPin, Calendar, Loader2 } from 'lucide-react';
-import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-import Loader from './Loader';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Plane, Wallet, Users, MapPin, Calendar } from "lucide-react";
+import Loader from "./Loader";
+import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 
 export default function EnhancedTravelForm() {
-  const [destination, setDestination] = useState('');
-  const [days, setDays] = useState('');
-  const [budget, setBudget] = useState('');
-  const [travelGroup, setTravelGroup] = useState('');
+  const [destination, setDestination] = useState("");
+  const [days, setDays] = useState("");
+  const [budget, setBudget] = useState("");
+  const [travelGroup, setTravelGroup] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  
-  const API_KEY = "YOUR_GOOGLE_API_KEY"; // Replace with your actual API key
-  
+
+  const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY; // Replace with your actual API key
+
   const SelectBudgetOptions = [
-    { id: 1, value: 'budget', icon: <Wallet className="w-8 h-8 mx-auto text-blue-500" />, label: 'Budget', description: 'Affordable options' },
-    { id: 2, value: 'moderate', icon: <Wallet className="w-8 h-8 mx-auto text-green-500" />, label: 'Moderate', description: 'Mid-range comfort' },
-    { id: 3, value: 'luxury', icon: <Wallet className="w-8 h-8 mx-auto text-purple-500" />, label: 'Luxury', description: 'Premium experience' }
+    {
+      id: 1,
+      value: "budget",
+      icon: <Wallet className="w-8 h-8 mx-auto text-blue-500" />,
+      label: "Budget",
+      description: "Affordable options",
+    },
+    {
+      id: 2,
+      value: "moderate",
+      icon: <Wallet className="w-8 h-8 mx-auto text-green-500" />,
+      label: "Moderate",
+      description: "Mid-range comfort",
+    },
+    {
+      id: 3,
+      value: "luxury",
+      icon: <Wallet className="w-8 h-8 mx-auto text-purple-500" />,
+      label: "Luxury",
+      description: "Premium experience",
+    },
   ];
 
   const SelectTravelsList = [
-    { id: 1, value: 'solo', icon: <Users className="w-8 h-8 mx-auto text-blue-500" />, label: 'Solo', description: 'Just me' },
-    { id: 2, value: 'couple', icon: <Users className="w-8 h-8 mx-auto text-pink-500" />, label: 'Couple', description: 'Romantic getaway' },
-    { id: 3, value: 'family', icon: <Users className="w-8 h-8 mx-auto text-green-500" />, label: 'Family', description: 'With kids' },
-    { id: 4, value: 'friends', icon: <Users className="w-8 h-8 mx-auto text-purple-500" />, label: 'Friends', description: 'Group adventure' }
+    {
+      id: 1,
+      value: "solo",
+      icon: <Users className="w-8 h-8 mx-auto text-blue-500" />,
+      label: "Solo",
+      description: "Just me",
+    },
+    {
+      id: 2,
+      value: "couple",
+      icon: <Users className="w-8 h-8 mx-auto text-pink-500" />,
+      label: "Couple",
+      description: "Romantic getaway",
+    },
+    {
+      id: 3,
+      value: "family",
+      icon: <Users className="w-8 h-8 mx-auto text-green-500" />,
+      label: "Family",
+      description: "With kids",
+    },
+    {
+      id: 4,
+      value: "friends",
+      icon: <Users className="w-8 h-8 mx-auto text-purple-500" />,
+      label: "Friends",
+      description: "Group adventure",
+    },
   ];
 
   const handleCardClick = (type, value) => {
-    if (type === 'budget') {
+    if (type === "budget") {
       setBudget(value);
-      setErrors({ ...errors, budget: '' });
-    } else if (type === 'travelGroup') {
+      setErrors({ ...errors, budget: "" });
+    } else if (type === "travelGroup") {
       setTravelGroup(value);
-      setErrors({ ...errors, travelGroup: '' });
+      setErrors({ ...errors, travelGroup: "" });
     }
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!destination) newErrors.destination = 'Please select a destination';
-    if (!days) newErrors.days = 'Please enter number of days';
-    if (!budget) newErrors.budget = 'Please select a budget option';
-    if (!travelGroup) newErrors.travelGroup = 'Please select who you are traveling with';
+    if (!destination) newErrors.destination = "Please select a destination";
+    if (!days) newErrors.days = "Please enter number of days";
+    if (!budget) newErrors.budget = "Please select a budget option";
+    if (!travelGroup)
+      newErrors.travelGroup = "Please select who you are traveling with";
     return newErrors;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newErrors = validate();
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    
+
     setLoading(true);
     // Mock API call
     setTimeout(() => {
@@ -66,29 +109,29 @@ export default function EnhancedTravelForm() {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
-      transition: { 
-        staggerChildren: 0.1
-      } 
-    }
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
   };
-  
+
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { 
-        type: "spring", 
-        stiffness: 100 
-      } 
-    }
+      transition: {
+        type: "spring",
+        stiffness: 100,
+      },
+    },
   };
 
   return (
     <div className=" overflow-x-hidden max-h-screen   flex w-full py-12 px-4">
-      <motion.div 
+      <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -101,32 +144,34 @@ export default function EnhancedTravelForm() {
             <div className="absolute w-20 h-20 rounded-full  bottom-4 left-10"></div>
             <div className="absolute w-32 h-32 rounded-full  right-1/3"></div>
           </div>
-          
-          <motion.div 
-            variants={itemVariants}
-            className="relative z-10"
-          >
+
+          <motion.div variants={itemVariants} className="relative z-10">
             <h1 className="text-4xl font-bold mb-2 flex items-center">
-              <Plane className="w-8 h-8 mr-3 inline" /> 
+              <Plane className="w-8 h-8 mr-3 inline" />
               Travel Preferences
             </h1>
             <p className="text-lg opacity-90 max-w-lg">
-              Tell us about your dream vacation and we'll create the perfect itinerary tailored just for you
+              Tell us about your dream vacation and we'll create the perfect
+              itinerary tailored just for you
             </p>
           </motion.div>
         </div>
-        
+
         {/* Form Content */}
         <div className="p-8">
           {loading ? (
-          <Loader/>        ) : (
-            <motion.form 
+            <Loader />
+          ) : (
+            <motion.form
               variants={containerVariants}
-              onSubmit={handleSubmit} 
+              onSubmit={handleSubmit}
               className="space-y-8"
             >
-            {/* Destination Input */}
-<motion.div variants={itemVariants} className="form-control">
+              {/*  both days and destination */}
+
+              <div className="flex items-center justify-between gap-4">
+               {/* Destination Input */}
+<motion.div variants={itemVariants} className="w-full md:w-1/2 form-control">
   <label className="label">
     <span className="label-text text-lg flex items-center">
       <MapPin className="w-5 h-5 mr-2 text-blue-500" />
@@ -135,41 +180,77 @@ export default function EnhancedTravelForm() {
   </label>
 
   <div
-    className={`relative ${errors.destination ? "tooltip tooltip-open tooltip-error" : ""}`}
+    className={`relative w-full ${errors.destination ? "tooltip tooltip-open tooltip-error" : ""}`}
     data-tip={errors.destination}
   >
-    <input
-      
-      type="text"
-      className="input input-bordered w-full focus:input-primary"
-      value={destination}
-      onChange={(e) => setDestination(e.target.value)}
-        placeholder="Where do you want to go?"
-      />
-
+    <GooglePlacesAutocomplete
+      apiKey={API_KEY}
+      selectProps={{
+        value: destination,
+        onChange: (value) => setDestination(value?.label || ""),
+        placeholder: "Where do you want to go?",
+        styles: {
+          control: (provided) => ({
+            ...provided,
+            backgroundColor: "transparent",
+            borderColor: "#d1d5db",
+            boxShadow: "none",
+            width: "100%",       // force full width
+            minHeight: "3rem",   // match Tailwind input height
+            borderRadius: "0.5rem", // rounded-md
+            paddingLeft: "0.75rem", // pl-3
+            paddingRight: "0.75rem", // pr-3
+          }),
+          placeholder: (provided) => ({
+            ...provided,
+            color: "#9ca3af",  // gray-400
+          }),
+          input: (provided) => ({
+            ...provided,
+        color:"#FFDBDB"      }),
+          singleValue: (provided) => ({
+            ...provided,
+            color: "#111827",  // make selected value text dark
+          }),
+        },
+      }}
+    />
   </div>
 </motion.div>
 
-              
-              {/* Days Input */}
-              <motion.div variants={itemVariants} className="form-control">
-                <label className="label">
-                  <span className="label-text text-lg flex items-center">
-                    <Calendar className="w-5 h-5 mr-2 text-blue-500" />
-                    Duration
-                  </span>
-                </label>
-                <div className={`relative ${errors.days ? "tooltip tooltip-open tooltip-error" : ""}`} data-tip={errors.days}>
-                  <input
-                    type="number"
-                    className="input input-bordered w-full focus:input-primary"
-                    placeholder="How many days?"
-                    value={days}
-                    onChange={(e) => setDays(e.target.value)}
-                  />
-                </div>
-              </motion.div>
-              
+
+               {/* Days Input */}
+<motion.div variants={itemVariants} className="w-1/2 form-control">
+  <label className="label">
+    <span className="label-text text-lg flex items-center">
+      <Calendar className="w-5 h-5 mr-2 text-blue-500" />
+      Duration
+    </span>
+  </label>
+
+  <div
+    className={`relative ${errors.days ? "tooltip tooltip-open tooltip-error" : ""}`}
+    data-tip={errors.days}
+  >
+    <select
+      className="select select-bordered w-full focus:select-primary"
+      value={days || "1"}
+      onChange={(e) => setDays(e.target.value)}
+    >
+      <option value="" disabled>
+        Select number of days
+      </option>
+      {[...Array(7)].map((_, index) => (
+        <option key={index + 1} value={index + 1}>
+          {index + 1} {index + 1 === 1 ? "day" : "days"}
+        </option>
+      ))}
+    </select>
+  </div>
+</motion.div>
+
+              </div>
+
               {/* Budget Options */}
               <motion.div variants={itemVariants} className="form-control">
                 <label className="label">
@@ -178,7 +259,12 @@ export default function EnhancedTravelForm() {
                     Budget
                   </span>
                 </label>
-                <div className={`${errors.budget ? "tooltip tooltip-open tooltip-error" : ""}`} data-tip={errors.budget}>
+                <div
+                  className={`${
+                    errors.budget ? "tooltip tooltip-open tooltip-error" : ""
+                  }`}
+                  data-tip={errors.budget}
+                >
                   <div className="grid grid-cols-3 gap-4">
                     {SelectBudgetOptions.map((option) => (
                       <motion.div
@@ -194,15 +280,19 @@ export default function EnhancedTravelForm() {
                       >
                         <div className="card-body items-center text-center p-4">
                           {option.icon}
-                          <h3 className="card-title text-lg mt-2">{option.label}</h3>
-                          <p className="text-gray-500 text-sm">{option.description}</p>
+                          <h3 className="card-title text-lg mt-2">
+                            {option.label}
+                          </h3>
+                          <p className="text-gray-500 text-sm">
+                            {option.description}
+                          </p>
                         </div>
                       </motion.div>
                     ))}
                   </div>
                 </div>
               </motion.div>
-              
+
               {/* Travel Group Options */}
               <motion.div variants={itemVariants} className="form-control">
                 <label className="label">
@@ -211,14 +301,23 @@ export default function EnhancedTravelForm() {
                     Travel Group
                   </span>
                 </label>
-                <div className={`${errors.travelGroup ? "tooltip tooltip-open tooltip-error" : ""}`} data-tip={errors.travelGroup}>
+                <div
+                  className={`${
+                    errors.travelGroup
+                      ? "tooltip tooltip-open tooltip-error"
+                      : ""
+                  }`}
+                  data-tip={errors.travelGroup}
+                >
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {SelectTravelsList.map((option) => (
                       <motion.div
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.98 }}
                         key={option.id}
-                        onClick={() => handleCardClick("travelGroup", option.value)}
+                        onClick={() =>
+                          handleCardClick("travelGroup", option.value)
+                        }
                         className={`card cursor-pointer transition-all ${
                           travelGroup === option.value
                             ? "-blue-50 border-2 border-blue-500 shadow-md"
@@ -227,15 +326,19 @@ export default function EnhancedTravelForm() {
                       >
                         <div className="card-body items-center text-center p-4">
                           {option.icon}
-                          <h3 className="card-title text-md mt-1">{option.label}</h3>
-                          <p className="text-gray-500 text-sm">{option.description}</p>
+                          <h3 className="card-title text-md mt-1">
+                            {option.label}
+                          </h3>
+                          <p className="text-gray-500 text-sm">
+                            {option.description}
+                          </p>
                         </div>
                       </motion.div>
                     ))}
                   </div>
                 </div>
               </motion.div>
-              
+
               {/* Submit Button */}
               <motion.div variants={itemVariants}>
                 <motion.button
@@ -252,17 +355,18 @@ export default function EnhancedTravelForm() {
         </div>
       </motion.div>
 
-
-
-
       {/* Google maps */}
-      <motion.div 
+      <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="max-w-4xl mx-auto -white shadow-2xl rounded-3xl mt-20 overflow-hidden relative"
+        className="max-w-2xl mx-auto -white shadow-2xl  mt-20 overflow-hidden relative"
       >
-        <img src="https://i.pinimg.com/736x/f9/af/73/f9af73ea72f0f484bf2c9c00a7a1a1d2.jpg" className='object-cover w-full h-full'  alt="" />      
+        <img
+          src="https://i.pinimg.com/736x/f9/af/73/f9af73ea72f0f484bf2c9c00a7a1a1d2.jpg"
+          className="object-cover w-full h-full"
+          alt=""
+        />
       </motion.div>
     </div>
   );
