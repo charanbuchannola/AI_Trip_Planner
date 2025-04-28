@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
 import { PlanContext } from "../components/context/TripContext";
+import Loader from "../components/Other/Loader";
 
 const TripPlanDisplay = () => {
   const { tripPlan } = useContext(PlanContext);
 
   if (!tripPlan) {
-    return <p className="text-center text-gray-500">No trip data available.</p>;
+    return <Loader/>
   }
 
   const { tripDetails, hotelOptions, itinerary } = tripPlan;

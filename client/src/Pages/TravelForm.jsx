@@ -3,9 +3,8 @@ import { motion } from "framer-motion";
 import { Plane, Wallet, Users, MapPin, Calendar } from "lucide-react";
 import Loader from "../components/Other/Loader";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-import DecayCard from "../components/ui/ReactBIt/DecayCard ";
-import SpotlightCard from "../components/ui/ReactBIt/SpotlightCard ";
 import TiltedCard from "../components/ui/ReactBIt/TiltedCard";
+import { useNavigate } from "react-router-dom";
 
 export default function EnhancedTravelForm() {
   const [destination, setDestination] = useState("");
@@ -14,6 +13,8 @@ export default function EnhancedTravelForm() {
   const [travelGroup, setTravelGroup] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY; // Replace with your actual API key
 
@@ -79,6 +80,7 @@ export default function EnhancedTravelForm() {
     } else if (type === "travelGroup") {
       setTravelGroup(value);
       setErrors({ ...errors, travelGroup: "" });
+
     }
   };
 
@@ -108,6 +110,7 @@ export default function EnhancedTravelForm() {
       setLoading(false);
       // Navigation or success handling would go here
     }, 1500);
+    navigate("/trip-display");
   };
 
   const containerVariants = {
