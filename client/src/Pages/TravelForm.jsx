@@ -152,7 +152,7 @@ export default function EnhancedTravelForm() {
       const response = await axiosInstance.post(
         "tripplan/createtrip",
         {
-          destination,
+          destination : destination?.label,  
           days,
           budget,
           travelGroup,
@@ -263,7 +263,7 @@ export default function EnhancedTravelForm() {
                   </label>
 
                   <div
-                    className={`relative w-full ${
+                    className={`relative w-full  ${
                       errors.destination
                         ? "tooltip tooltip-open tooltip-error"
                         : ""
@@ -275,7 +275,7 @@ export default function EnhancedTravelForm() {
                   apiKey={API_KEY}
                   selectProps={{
                     value: destination,
-                    onChange: (value) => setDestination(value?.label ),
+                    onChange: (value) => setDestination(value),
                         styles: {
                           control: (provided) => ({
                             ...provided,
