@@ -120,35 +120,6 @@ export default function EnhancedTravelForm() {
     }
   };
 
-  const validate = () => {
-    const newErrors = {};
-    if (!destination) newErrors.destination = "Please select a destination";
-    if (!days) newErrors.days = "Please enter number of days";
-    if (!budget) newErrors.budget = "Please select a budget option";
-    if (!travelGroup)
-      newErrors.travelGroup = "Please select who you are traveling with";
-    return newErrors;
-  };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   const newErrors = validate();
-
-  //   if (Object.keys(newErrors).length > 0) {
-  //     setErrors(newErrors);
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   // Mock API call
-  //   setTimeout(() => {
-  //     console.log({ destination, days, budget, travelGroup });
-  //     setLoading(false);
-  //     // Navigation or success handling would go here
-  //   }, 1500);
-  //   navigate("/trip-display");
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
@@ -194,27 +165,26 @@ export default function EnhancedTravelForm() {
       );
 
       const tripData = response.data.trip;
-      console.log(tripData);
-
-      setTripPlan(tripData); // Save trip to context
+      setTripPlan(tripData); 
       const tripId = response.data.trip._id;
       console.log(`tripId after tipform submit: ${tripId}`);
-      navigate(`/trip-display/${tripId}`);
+      navigate(`/trip-display/`);
+    
     } catch (error) {
       console.error("Failed to create trip:", error);
       alert(
-        error?.response?.data?.message ||
-          "Failed to create trip. Please try again."
-      );
+        error?.response?.data?.message ||"Failed to create trip. Please try again." );
     } finally {
       setLoading(false);
+     
     }
 
     // Reset form
-    setDestination("");
+    setDestination(null);
     setDays("");
     setBudget("");
     setTravelGroup("");
+   
   };
 
   const containerVariants = {
@@ -269,9 +239,7 @@ export default function EnhancedTravelForm() {
 
         {/* Form Content */}
         <div className="p-8">
-          {loading ? (
-            <Loader />
-          ) : (
+         
             <motion.form
               variants={containerVariants}
               onSubmit={handleSubmit}
@@ -350,7 +318,7 @@ export default function EnhancedTravelForm() {
                   </label>
 
                   <div
-                    className={`relative ${
+                    className={`relative w-full ${
                       errors.days ? "tooltip tooltip-open tooltip-error" : ""
                     }`}
                     data-tip={errors.days}
@@ -374,13 +342,14 @@ export default function EnhancedTravelForm() {
               </div>
 
               {/* Budget Options */}
-              <motion.div variants={itemVariants} className="form-control">
+              <motion.div variants={itemVariants} className=" flex flex-col form-control">
                 <label className="label">
                   <span className="label-text text-lg flex items-center">
                     <Wallet className="w-5 h-5 mr-2 text-blue-500" />
                     Budget
                   </span>
                 </label>
+
                 <div
                   className={`${
                     errors.budget ? "tooltip tooltip-open tooltip-error" : ""
@@ -442,7 +411,7 @@ export default function EnhancedTravelForm() {
               </motion.div>
 
               {/* Travel Group Options */}
-              <motion.div variants={itemVariants} className="form-control">
+              <motion.div variants={itemVariants} className="flex flex-col form-control">
                 <label className="label">
                   <span className="label-text text-lg flex items-center">
                     <Users className="w-5 h-5 mr-2 text-blue-500" />
@@ -524,7 +493,6 @@ export default function EnhancedTravelForm() {
                 </motion.button>
               </motion.div>
             </motion.form>
-          )}
         </div>
       </motion.div>
 
