@@ -9,11 +9,12 @@ const Logout = () => {
   const logout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/logout",
+        "http://localhost:5000/api/user/logout",
         {},
         { withCredentials: true }
       );
       setUser(null);
+      localStorage.removeItem("token");
       navigate("/login");
     } catch (error) {
       console.error(

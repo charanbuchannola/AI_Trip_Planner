@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import React, { useContext, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import { AuthContext } from "./context/Context";
-import SplitText from "./ui/ReactBIt/SplitText";
+import { AuthContext } from "../context/Context";
+import SplitText from "../ui/ReactBIt/SplitText";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ export default function LoginForm() {
       try {
         const userdata = { email, password };
         const response = await axios.post(
-          "http://localhost:5000/api/auth/login",
+          "http://localhost:5000/api/user/login",
           userdata,
           { withCredentials: true }
         );

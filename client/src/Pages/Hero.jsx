@@ -1,9 +1,9 @@
 
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
-import SplitText from './ui/ReactBIt/SplitText';
-import RotatingText from './ui/ReactBIt/RotatingText';
-import InfiniteMenu from './ui/ReactBIt/InfiniteMenu ';
+import SplitText from '../components/ui/ReactBIt/SplitText';
+import RotatingText from '../components/ui/ReactBIt/RotatingText';
+import InfiniteMenu from '../components/ui/ReactBIt/InfiniteMenu ';
 
 
 

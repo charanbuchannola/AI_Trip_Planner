@@ -1,19 +1,21 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const cookieparser = require("cookie-parser");
-const authRoutes = require("../src/routes/authRoutes");
+
+const userRoutes = require("./routes/user.routes.js");
+const tripPlanRoutes = require("./routes/tripPlanRoutes.js");
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5000"], // Add all allowed frontend origins here
+    origin: "http://localhost:5173", // Add all allowed frontend origins here
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieparser());
 
-app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/tripplan", tripPlanRoutes);
 
 module.exports = app;
