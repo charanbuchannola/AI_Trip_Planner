@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ItinerarySchema = new mongoose.Schema(
+const itinerarySchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -9,7 +9,7 @@ const ItinerarySchema = new mongoose.Schema(
     },
     tripId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "TripPreference",
+      ref: "Trip",
       required: true,
     },
     itinerary: {
@@ -20,4 +20,6 @@ const ItinerarySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Itinerary", ItinerarySchema);
+iteneraryModel = mongoose.model("Itinerary", itinerarySchema);
+
+module.exports = iteneraryModel;

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const TripPreferenceSchema = new mongoose.Schema(
+const tripSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -19,16 +19,20 @@ const TripPreferenceSchema = new mongoose.Schema(
     },
     budget: {
       type: String,
-      enum: ["low", "medium", "high"],
+      // enum: ["cheap", "moderate", "luxary"],
       required: true,
     },
     travelGroup: {
       type: String,
-      enum: ["solo", "family", "friends", "couple"],
+      enum: ["just_me", "couple", "friends", "family"],
       required: true,
     },
+
+    generatedPlan: { type: Object }, // the AI generated trip details
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("TripPreference", TripPreferenceSchema);
+const tripModel = mongoose.model("Trip", tripSchema);
+
+module.exports = tripModel;

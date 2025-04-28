@@ -6,12 +6,7 @@ import Register from "./components/Auth/Register";
 
 import Hero from "./Pages/Hero";
 import TravelPreferencesForm from "./components/TravelPreferencesForm";
-import TripPlanDisplay from "./Pages/TripPlanDisplay";
-import LoginForm from "./components/Auth/LoginForm";
-import { useTheme } from "./components/context/ThemeContext";
-import Themes from "./components/Themes/Themes";
-import EnhancedTravelForm from "./Pages/TravelForm";
-import Loader from "./components/Other/Loader";
+import TripPlanDisplay from "./components/TripPlanDisplay";
 
 const App = () => {
   const { theme } = useTheme();
@@ -26,7 +21,8 @@ const App = () => {
         <Route path="/login" element={<LoginForm />} />
         {/* <Route path="/travel-preferences" element={<TravelPreferencesForm />} /> */}
         <Route path="/travel-preferences" element={<EnhancedTravelForm />} />
-        <Route path="/trip-display" element={<TripPlanDisplay />} />
+        <Route path="/trip-display/:tripId" element={<TripPlanDisplay />} />
+        <Route path="/chat" element={<Chat />} />
       </Routes>
     </div>
   );

@@ -1,15 +1,74 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
 import { PlanContext } from "../components/context/TripContext";
+
+import { useParams, useNavigate } from "react-router-dom";
 import Loader from "../components/Other/Loader";
 
 const TripPlanDisplay = () => {
-  const { tripPlan } = useContext(PlanContext);
+  const { tripId } = useParams();
+  console.log(tripId);
+  const { tripPlan, setTripPlan } = useContext(PlanContext);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTripDetails = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please log in first.");
+        navigate("/login");
+        return;
+      }
+      setLoading(true);
+
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/tripplan/${tripId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log(response);
+
+        const { trip } = response.data;
+
+        setTripPlan({
+          generatedPlan: trip.generatedPlan,
+          tripDetails: {
+            location: trip.destination,
+            duration: trip.days + " days",
+            travelers: trip.travelGroup,
+            budget: trip.budget,
+          },
+        });
+      } catch (error) {
+        console.error("Error fetching trip details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTripDetails();
+  }, [tripId, setTripPlan, navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   if (!tripPlan) {
     return <Loader/>
   }
 
-  const { tripDetails, hotelOptions, itinerary } = tripPlan;
+  const { tripDetails, generatedPlan } = tripPlan;
+  const { hotelOptions, itinerary } = generatedPlan || {};
 
   return (
     <div className="max-w-5xl mx-auto p-6">
@@ -17,16 +76,16 @@ const TripPlanDisplay = () => {
       <section className="bg-blue-50 p-4 rounded-lg mb-6">
         <h2 className="text-2xl font-bold mb-2">Trip Details ✈️</h2>
         <p>
-          <strong>Location:</strong> {tripDetails.location}
+          <strong>Location:</strong> {tripDetails?.location}
         </p>
         <p>
-          <strong>Duration:</strong> {tripDetails.duration}
+          <strong>Duration:</strong> {tripDetails?.duration}
         </p>
         <p>
-          <strong>Travelers:</strong> {tripDetails.travelers}
+          <strong>Travelers:</strong> {tripDetails?.travelers}
         </p>
         <p>
-          <strong>Budget:</strong> {tripDetails.budget}
+          <strong>Budget:</strong> {tripDetails?.budget}
         </p>
       </section>
 
@@ -34,7 +93,7 @@ const TripPlanDisplay = () => {
       <section className="mb-6">
         <h2 className="text-2xl font-bold mb-4">Hotel Options 🏨</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {hotelOptions.map((hotel, index) => (
+          {hotelOptions?.map((hotel, index) => (
             <div
               key={index}
               className="bg-white shadow-lg rounded-lg overflow-hidden"
@@ -59,49 +118,50 @@ const TripPlanDisplay = () => {
       {/* Itinerary */}
       <section>
         <h2 className="text-2xl font-bold mb-4">Itinerary 📅</h2>
-        {Object.keys(itinerary).map((day) => {
-          const { theme, bestTimeToVisit, plan } = itinerary[day];
-          return (
-            <div key={day} className="bg-gray-50 p-4 rounded-lg mb-6">
-              <h3 className="text-xl font-semibold mb-2">Day: {day}</h3>
-              <p>
-                <strong>Theme:</strong> {theme}
-              </p>
-              <p>
-                <strong>Best Time to Visit:</strong> {bestTimeToVisit}
-              </p>
-              <div className="mt-4 space-y-4">
-                {plan.map((place, index) => (
-                  <div
-                    key={index}
-                    className="bg-white shadow-md rounded-lg p-4 flex items-center"
-                  >
-                    <img
-                      src={place.placeImageUrl}
-                      alt={place.placeName}
-                      className="w-24 h-24 rounded-lg object-cover mr-4"
-                    />
-                    <div>
-                      <h4 className="text-lg font-semibold">
-                        {place.placeName}
-                      </h4>
-                      <p className="text-gray-600 text-sm">
-                        {place.placeDetails}
-                      </p>
-                      <p className="text-blue-500 font-semibold">
-                        {place.ticketPricing}
-                      </p>
-                      <p className="text-yellow-500">⭐ {place.rating}</p>
-                      <p className="text-sm text-gray-500">
-                        Travel Time: {place.timeTravel}
-                      </p>
+        {itinerary &&
+          Object.keys(itinerary).map((day) => {
+            const { theme, bestTimeToVisit, plan } = itinerary[day];
+            return (
+              <div key={day} className="bg-gray-50 p-4 rounded-lg mb-6">
+                <h3 className="text-xl font-semibold mb-2">Day: {day}</h3>
+                <p>
+                  <strong>Theme:</strong> {theme}
+                </p>
+                <p>
+                  <strong>Best Time to Visit:</strong> {bestTimeToVisit}
+                </p>
+                <div className="mt-4 space-y-4">
+                  {plan?.map((place, index) => (
+                    <div
+                      key={index}
+                      className="bg-white shadow-md rounded-lg p-4 flex items-center"
+                    >
+                      <img
+                        src={place.placeImageUrl}
+                        alt={place.placeName}
+                        className="w-24 h-24 rounded-lg object-cover mr-4"
+                      />
+                      <div>
+                        <h4 className="text-lg font-semibold">
+                          {place.placeName}
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          {place.placeDetails}
+                        </p>
+                        <p className="text-blue-500 font-semibold">
+                          {place.ticketPricing}
+                        </p>
+                        <p className="text-yellow-500">⭐ {place.rating}</p>
+                        <p className="text-sm text-gray-500">
+                          Travel Time: {place.timeTravel}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </section>
     </div>
   );
