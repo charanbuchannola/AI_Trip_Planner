@@ -10,7 +10,7 @@ import {
   SelectTravelsList,
 } from "../constants/Options";
 import { chatSession } from "./AIModal";
-import Loader from "../components/Loader";
+import Loader from "./Other/Loader";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 const TravelPreferencesForm = () => {

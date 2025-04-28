@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { PlanContext } from "./context/TripContext";
+import { PlanContext } from "../components/context/TripContext";
 
 const TripPlanDisplay = () => {
   const { tripPlan } = useContext(PlanContext);

@@ -1,5 +1,5 @@
 import React from "react";
-import Hyperspeed from './ui/ReactBIt/Hyperspeed';
+import Hyperspeed from '../ui/ReactBIt/Hyperspeed';
 
 const Loader = () => (
 

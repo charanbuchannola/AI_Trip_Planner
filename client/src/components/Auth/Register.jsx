@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import React, { useContext, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import { AuthContext } from "./context/Context";
-import SplitText from "./ui/ReactBIt/SplitText";
+import { AuthContext } from "../context/Context";
+import SplitText from "../ui/ReactBIt/SplitText";
 
 export default function Register() {
   const [username, setUsername] = useState("");

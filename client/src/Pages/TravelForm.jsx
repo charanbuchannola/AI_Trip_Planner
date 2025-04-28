@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Plane, Wallet, Users, MapPin, Calendar } from "lucide-react";
-import Loader from "./Loader";
+import Loader from "../components/Other/Loader";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-import DecayCard from "./ui/ReactBIt/DecayCard ";
-import SpotlightCard from "./ui/ReactBIt/SpotlightCard ";
-import TiltedCard from "./ui/ReactBIt/TiltedCard";
+import DecayCard from "../components/ui/ReactBIt/DecayCard ";
+import SpotlightCard from "../components/ui/ReactBIt/SpotlightCard ";
+import TiltedCard from "../components/ui/ReactBIt/TiltedCard";
 
 export default function EnhancedTravelForm() {
   const [destination, setDestination] = useState("");
@@ -200,7 +200,6 @@ export default function EnhancedTravelForm() {
                     destination,
                     onChange: (value) => setDestination(value?.label || ""),
                    value: destination,
-                 
                         styles: {
                           control: (provided) => ({
                             ...provided,
@@ -362,9 +361,9 @@ export default function EnhancedTravelForm() {
                         onClick={() =>
                           handleCardClick("travelGroup", option.value)
                         }
-                        className={` cursor-pointer transition-all ${
+                        className={` cursor-pointer transition-all rounded  ${
                           travelGroup === option.value
-                            ? "-blue-50 border-2 border-blue-500 shadow-md"
+                            ? " border-2 border-blue-500 shadow-md"
                             : " hover:shadow-md"
                         }`}
                       >
