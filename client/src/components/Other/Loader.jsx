@@ -6,7 +6,8 @@ const Loader = () => (
   // the component will fill the height/width of its parent container, edit the CSS to change this
   // the options below are the default values
   
-  <Hyperspeed
+ <div className="h-screen overflow-hidden w-screen">
+   <Hyperspeed
     effectOptions={{
       onSpeedUp: () => { },
       onSlowDown: () => { },
@@ -45,6 +46,7 @@ const Loader = () => (
       }
     }}
   />
+ </div>
 );
 
 export default Loader;

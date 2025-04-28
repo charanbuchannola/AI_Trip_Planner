@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/Context";
 import SplitText from "../ui/ReactBIt/SplitText";
+import { axiosInstance } from "../Axios/axios";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");
@@ -18,12 +19,10 @@ export default function LoginForm() {
       e.preventDefault();
       try {
         const userdata = { email, password };
-        const response = await axios.post(
-          "http://localhost:5000/api/user/login",
-          userdata,
-          { withCredentials: true }
-        );
+        const response = await axiosInstance.post("/user/login", userdata );
         setUser(response.data.user);
+        localStorage.setItem("token", response.data.token);
+        console.log(response.data);
         navigate("/travel-preferences");
       } catch (error) {
         console.error("Login failed:", error.response?.data?.error || error.message);

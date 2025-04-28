@@ -3,15 +3,16 @@ import { Route, Routes } from "react-router-dom";
 
 import Navbar from "./components/Other/Navbar";
 import Register from "./components/Auth/Register";
+import LoginForm from "./components/Auth/LoginForm";
 
 import Hero from "./Pages/Hero";
 import TravelPreferencesForm from "./components/TravelPreferencesForm";
-import TripPlanDisplay from "./components/TripPlanDisplay";
-import LoginForm from "./components/LoginForm";
+
 import { useTheme } from "./components/context/ThemeContext";
+
 import Themes from "./components/Themes/Themes";
-import EnhancedTravelForm from "./components/TravelForm";
-import Loader from "./components/Loader";
+import EnhancedTravelForm from "./Pages/TravelForm";
+import TripPlanDisplay from "./Pages/TripPlanDisplay";
 
 const App = () => {
   const { theme } = useTheme();

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/Context";
 import SplitText from "../ui/ReactBIt/SplitText";
+import { axiosInstance } from "../Axios/axios";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -19,13 +20,10 @@ export default function Register() {
     e.preventDefault();
     try {
       const newUser = { username, email, password };
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        newUser,
-        { withCredentials: true }
-      );
+      const response = await axiosInstance.post("/user/register", newUser, { withCredentials: true });
+      localStorage.setItem("token", response.data.token);
       setUser(response.data.user);
-      navigate("/login");
+      navigate("/travel-preferences");
     } catch (error) {
       console.error(
         "Registration failed:",

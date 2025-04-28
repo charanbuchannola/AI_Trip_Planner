@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { SelectBudgetOptions, SelectTravelsList } from "../constants/Options";
 import Loader from "./Other/Loader";
+import { axiosInstance } from "./Axios/axios";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -30,8 +31,8 @@ const TravelPreferencesForm = () => {
         return;
       }
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/user/check-auth",
+        const response = await axiosInstance.get(
+          "/user/check-auth",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -80,8 +81,8 @@ const TravelPreferencesForm = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:5000/api/tripplan/createtrip",
+      const response = await axiosInstance.post(
+        "/tripplan/createtrip",
         {
           destination,
           days,

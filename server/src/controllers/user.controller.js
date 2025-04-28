@@ -13,7 +13,6 @@ module.exports.registerController = async (req, res) => {
       email,
       password: hashPassword,
     });
-    console.log(user);
 
     const token = jwt.sign(
       { id: user._id, name: user.username },
