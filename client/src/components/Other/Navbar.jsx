@@ -51,12 +51,7 @@ export default function Navbar() {
 
             {isAuthenticated ? (
               <>
-                {/* Profile Link */}
-                <Link to="/profile" className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl btn-ghost gap-2">
-                  <User className=" text-primary-300" />
-                  <span className="hidden sm:inline">Profile</span>
-                </Link>
-
+              
                 {/* Logout Button */}
                 <button
                   className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl btn-ghost flex gap-2 items-center"

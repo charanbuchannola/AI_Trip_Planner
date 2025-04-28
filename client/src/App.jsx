@@ -6,7 +6,6 @@ import Register from "./components/Auth/Register";
 import LoginForm from "./components/Auth/LoginForm";
 
 import Hero from "./Pages/Hero";
-import TravelPreferencesForm from "./components/TravelPreferencesForm";
 
 import { useTheme } from "./components/context/ThemeContext";
 
@@ -25,7 +24,6 @@ const App = () => {
         <Route path="/themes" element={<Themes />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<LoginForm />} />
-        {/* <Route path="/travel-preferences" element={<TravelPreferencesForm />} /> */}
         <Route path="/travel-preferences" element={<EnhancedTravelForm />} />
         <Route path="/trip-display/:tripId" element={<TripPlanDisplay />} />
       </Routes>
