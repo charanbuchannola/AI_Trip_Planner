@@ -68,6 +68,7 @@ const TripPlanDisplay = () => {
   }
 
   const { tripDetails, generatedPlan } = tripPlan;
+  console.log(tripPlan);
   const { hotelOptions, itinerary } = generatedPlan || {};
 
   return (
@@ -76,7 +77,7 @@ const TripPlanDisplay = () => {
       <section className="bg-blue-50 p-4 rounded-lg mb-6">
         <h2 className="text-2xl font-bold mb-2">Trip Details ✈</h2>
         <p>
-          <strong>Location:</strong> {tripDetails?.location}
+          <strong>Location:</strong> {tripDetails?.destination}
         </p>
         <p>
           <strong>Duration:</strong> {tripDetails?.duration}

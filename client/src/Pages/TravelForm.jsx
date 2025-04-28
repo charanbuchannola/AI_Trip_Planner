@@ -210,7 +210,9 @@ export default function EnhancedTravelForm() {
   };
 
   return (
-    <div className=" overflow-x-hidden max-h-screen  md:flex w-full py-12 px-4">
+    
+      loading ? (<Loader />) : (
+        <div className=" overflow-x-hidden max-h-screen  md:flex w-full py-12 px-4">
       <motion.div
         initial="hidden"
         animate="visible"
@@ -527,5 +529,7 @@ export default function EnhancedTravelForm() {
         />
       </motion.div>
     </div>
+      )
+    
   );
 }
