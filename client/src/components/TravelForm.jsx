@@ -140,11 +140,11 @@ export default function EnhancedTravelForm() {
   >
     <input
       
-        onChange={(e) => setDestination(value?.label || "")}
-        type="number"
-        className="input input-bordered w-full focus:input-primary"
+      type="text"
+      className="input input-bordered w-full focus:input-primary"
+      value={destination}
+      onChange={(e) => setDestination(e.target.value)}
         placeholder="Where do you want to go?"
-        value={destination}
       />
 
   </div>
