@@ -25,7 +25,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/travel-preferences" element={<EnhancedTravelForm />} />
-        <Route path="/trip-display/" element={<TripPlanDisplay />} />
+        {/* <Route path="/trip-display/" element={<TripPlanDisplay />} /> */}
         <Route path="/trip-display/:tripId" element={<TripPlanDisplay />} />
       </Routes>
     </div>

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { PlanContext } from "../components/context/TripContext";
 import { axiosInstance } from "../components/Axios/axios";
+import Loader from "../components/Other/Loader";
 
 const TripPlanDisplay = () => {
   const { tripId } = useParams();
@@ -57,9 +58,7 @@ const TripPlanDisplay = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
-      </div>
+      <Loader/>
     );
   }
 
@@ -67,26 +66,26 @@ const TripPlanDisplay = () => {
     return <p className="text-center text-gray-500">No trip data available.</p>;
   }
 
-  const { tripDetails, generatedPlan } = tripPlan;
+  const {  generatedPlan } = tripPlan;
   console.log(tripPlan);
   const { hotelOptions, itinerary } = generatedPlan || {};
 
   return (
     <div className="max-w-5xl mx-auto p-6 mt-20">
       {/* Trip Details */}
-      <section className="bg-blue-50 p-4 rounded-lg mb-6">
+      <section className=" blue-50 p-4 rounded-lg mb-6">
         <h2 className="text-2xl font-bold mb-2">Trip Details ✈</h2>
         <p>
-          <strong>Location:</strong> {tripDetails?.destination}
+          <strong>Location:</strong> {tripPlan?.destination}
         </p>
         <p>
-          <strong>Duration:</strong> {tripDetails?.duration}
+          <strong>Duration:</strong> {tripPlan?.days}
         </p>
         <p>
-          <strong>Travelers:</strong> {tripDetails?.travelers}
+          <strong>Travelers:</strong> {tripPlan?.travelGroup}
         </p>
         <p>
-          <strong>Budget:</strong> {tripDetails?.budget}
+          <strong>Budget:</strong> {tripPlan?.budget}
         </p>
       </section>
 
@@ -97,7 +96,7 @@ const TripPlanDisplay = () => {
           {hotelOptions?.map((hotel, index) => (
             <div
               key={index}
-              className="bg-white shadow-lg rounded-lg overflow-hidden"
+              className=" white shadow-lg rounded-lg overflow-hidden"
             >
               <img
                 src={hotel.hotelImageUrl}
@@ -123,7 +122,7 @@ const TripPlanDisplay = () => {
           Object.keys(itinerary).map((day) => {
             const { theme, bestTimeToVisit, plan } = itinerary[day];
             return (
-              <div key={day} className="bg-gray-50 p-4 rounded-lg mb-6">
+              <div key={day} className=" gray-50 p-4 rounded-lg mb-6">
                 <h3 className="text-xl font-semibold mb-2">Day: {day}</h3>
                 <p>
                   <strong>Theme:</strong> {theme}
@@ -135,7 +134,7 @@ const TripPlanDisplay = () => {
                   {plan?.map((place, index) => (
                     <div
                       key={index}
-                      className="bg-white shadow-md rounded-lg p-4 flex items-center"
+                      className=" white shadow-md rounded-lg p-4 flex items-center"
                     >
                       <img
                         src={place.placeImageUrl}
