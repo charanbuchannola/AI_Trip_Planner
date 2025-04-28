@@ -6,6 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 const TripPlanDisplay = () => {
   const { tripId } = useParams();
+  console.log(tripId);
   const { tripPlan, setTripPlan } = useContext(PlanContext);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

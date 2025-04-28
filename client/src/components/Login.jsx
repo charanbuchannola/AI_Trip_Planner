@@ -16,14 +16,21 @@ const Login = () => {
       password,
     };
     try {
-      const res = await axios.post("http://localhost:5000/api/user/login", userdata, {
-        withCredentials: true, // Include credentials for cookies if needed
-      });
+      const res = await axios.post(
+        "http://localhost:5000/api/user/login",
+        userdata,
+        {
+          withCredentials: true, // Include credentials for cookies if needed
+        }
+      );
       console.log("Login successful:", res);
       localStorage.setItem("token", res.data.token);
-      navigate("/feed");
+      navigate("/travel-preferences");
     } catch (err) {
-      console.error("Login failed:", err.response?.data?.message || err.message);
+      console.error(
+        "Login failed:",
+        err.response?.data?.message || err.message
+      );
       alert(err.response?.data?.message || "Login failed. Please try again.");
     }
   };
