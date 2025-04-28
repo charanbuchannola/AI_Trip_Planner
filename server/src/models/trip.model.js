@@ -19,7 +19,7 @@ const tripSchema = new mongoose.Schema(
     },
     budget: {
       type: String,
-      // enum: ["cheap", "moderate", "luxary"],
+      enum: ["cheap", "moderate", "luxary"],
       required: true,
     },
     travelGroup: {

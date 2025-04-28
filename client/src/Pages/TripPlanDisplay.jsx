@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
 import { PlanContext } from "../components/context/TripContext";
 
 import { useParams, useNavigate } from "react-router-dom";
 import Loader from "../components/Other/Loader";
+import { axiosInstance } from "../components/Axios/axios";
 
 const TripPlanDisplay = () => {
   const { tripId } = useParams();
@@ -23,8 +23,8 @@ const TripPlanDisplay = () => {
       setLoading(true);
 
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/tripplan/${tripId}`,
+        const response = await axiosInstance.get(
+          `tripplan/${tripId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -57,14 +57,12 @@ const TripPlanDisplay = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="w-12 h-12 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
-      </div>
+      <Loader/>
     );
   }
 
   if (!tripPlan) {
-    return <Loader/>
+    return <p className="text-center text-gray-500">No trip data available.</p>;
   }
 
   const { tripDetails, generatedPlan } = tripPlan;

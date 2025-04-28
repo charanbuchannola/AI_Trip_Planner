@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
 import { Plane, Wallet, Users, MapPin, Calendar } from "lucide-react";
 import Loader from "../components/Other/Loader";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import TiltedCard from "../components/ui/ReactBIt/TiltedCard";
 import { useNavigate } from "react-router-dom";
+import { PlanContext } from "../components/context/TripContext";
+import { axiosInstance } from "../components/Axios/axios";
+const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY; // Replace with your actual API key
 
 export default function EnhancedTravelForm() {
   const [destination, setDestination] = useState("");
@@ -13,15 +16,16 @@ export default function EnhancedTravelForm() {
   const [travelGroup, setTravelGroup] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { setTripPlan } = useContext(PlanContext);
 
   const navigate = useNavigate();
 
-  const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY; // Replace with your actual API key
 
   const SelectBudgetOptions = [
     {
       id: 1,
-      value: "budget",
+      value: "cheap",
       icon: "https://i.pinimg.com/736x/54/0a/de/540adeb04c6097f94fb20a2232869166.jpg",
       label: "Budget",
       description: "Affordable options",
@@ -35,7 +39,7 @@ export default function EnhancedTravelForm() {
     },
     {
       id: 3,
-      value: "luxury",
+      value: "luxary",
       icon: "https://i.pinimg.com/736x/0d/d0/86/0dd086ad5519a3133ffa6b08d81ee0b0.jpg",
       label: "Luxury",
       description: "Premium experience",
@@ -45,7 +49,7 @@ export default function EnhancedTravelForm() {
   const SelectTravelsList = [
     {
       id: 1,
-      value: "solo",
+      value: "just_me",
       icon: "https://i.pinimg.com/736x/9f/9b/a6/9f9ba670e6cfb23b91953f5f67ddd46a.jpg",
       label: "Solo",
       description: "Just me",
@@ -73,6 +77,38 @@ export default function EnhancedTravelForm() {
     },
   ];
 
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      const token = localStorage.getItem("token");
+      // console.log(`token: ${token}`);
+      if (!token) {
+        alert("Please log in first.");
+        navigate("/login"); // or redirect to login
+        return;
+      }
+      try {
+        const response = await axiosInstance.get(
+          "/user/check-auth",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error("Authentication error:", error.response || error.message);
+        alert("Authentication failed. Please log in again.");
+        navigate("/login");
+      }
+    };
+
+    checkAuthStatus();
+  }, [navigate]);
+
   const handleCardClick = (type, value) => {
     if (type === "budget") {
       setBudget(value);
@@ -94,23 +130,91 @@ export default function EnhancedTravelForm() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const newErrors = validate();
+
+  //   if (Object.keys(newErrors).length > 0) {
+  //     setErrors(newErrors);
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   // Mock API call
+  //   setTimeout(() => {
+  //     console.log({ destination, days, budget, travelGroup });
+  //     setLoading(false);
+  //     // Navigation or success handling would go here
+  //   }, 1500);
+  //   navigate("/trip-display");
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validate();
+    if (!isAuthenticated) {
+      alert("You must be logged in to generate a trip.");
+      return;
+    }
+
+    const newErrors = {};
+    if (!destination) newErrors.destination = "Destination is required.";
+    if (!days) newErrors.days = "Number of days is required.";
+    if (!budget) newErrors.budget = "Budget selection is required.";
+    if (!travelGroup)
+      newErrors.travelGroup = "Travel group selection is required.";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
+    if (parseInt(days, 10) > 7) {
+      alert("Maximum number of days exceeded! Please choose at most 7 days.");
+      return;
+    }
+
+    setErrors({});
     setLoading(true);
-    // Mock API call
-    setTimeout(() => {
-      console.log({ destination, days, budget, travelGroup });
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.post(
+        "tripplan/createtrip",
+        {
+          destination,
+          days,
+          budget,
+          travelGroup,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const tripData = response.data.trip;
+      console.log(tripData);
+
+      setTripPlan(tripData); // Save trip to context
+      const tripId = response.data.trip._id;
+      console.log(`tripId after tipform submit: ${tripId}`);
+      navigate(`/trip-display/${tripId}`);
+    } catch (error) {
+      console.error("Failed to create trip:", error);
+      alert(
+        error?.response?.data?.message ||
+          "Failed to create trip. Please try again."
+      );
+    } finally {
       setLoading(false);
-      // Navigation or success handling would go here
-    }, 1500);
-    navigate("/trip-display");
+    }
+
+    // Reset form
+    setDestination("");
+    setDays("");
+    setBudget("");
+    setTravelGroup("");
   };
 
   const containerVariants = {
@@ -200,9 +304,8 @@ export default function EnhancedTravelForm() {
                     <GooglePlacesAutocomplete
                   apiKey={API_KEY}
                   selectProps={{
-                    destination,
-                    onChange: (value) => setDestination(value?.label || ""),
-                   value: destination,
+                    value: destination,
+                    onChange: (value) => setDestination(value?.label ),
                         styles: {
                           control: (provided) => ({
                             ...provided,
@@ -227,7 +330,6 @@ export default function EnhancedTravelForm() {
                         
                         },
                       }}
-
                     />
                   </div>
                   {

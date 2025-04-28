@@ -32,7 +32,7 @@ const TravelPreferencesForm = () => {
       }
       try {
         const response = await axiosInstance.get(
-          "/user/check-auth",
+          "user/check-auth",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -44,7 +44,7 @@ const TravelPreferencesForm = () => {
         }
       } catch (error) {
         console.error("Authentication error:", error.response || error.message);
-        alert("Authentication failed. Please log in again.");
+        alert("Authentication failed. Please log in again. -->" , error.message || error.response);
         navigate("/login");
       }
     };
@@ -63,8 +63,7 @@ const TravelPreferencesForm = () => {
     if (!destination) newErrors.destination = "Destination is required.";
     if (!days) newErrors.days = "Number of days is required.";
     if (!budget) newErrors.budget = "Budget selection is required.";
-    if (!travelGroup)
-      newErrors.travelGroup = "Travel group selection is required.";
+    if (!travelGroup) newErrors.travelGroup = "Travel group selection is required.";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -81,8 +80,8 @@ const TravelPreferencesForm = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await axiosInstance.post(
-        "/tripplan/createtrip",
+      const response = await axis.post(
+        "http://localhost:5000/api/tripplan/createtrip",
         {
           destination,
           days,
