@@ -141,38 +141,7 @@ const TripPlanDisplay = () => {
   return (
     <div className="max-h-screen overflow-x-hidden relative">
       <div className="max-w-7xl mt-15 mx-auto py-12 px-6">
-        {/* Weather Widget
-        <motion.section
-          className="card bg-base-100 shadow-xl mb-10 rounded-2xl border border-base-300 overflow-hidden"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          <div className="card-body p-6 flex items-center space-x-4">
-            <FaCloudSun className="text-4xl text-amber-400" />
-            <div>
-              <h3 className="text-2xl font-bold">
-                Weather in {tripDetails?.location || "N/A"}
-              </h3>
-              {weather ? (
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}.png`}
-                    alt={weather.weather[0].description}
-                    className="w-10 h-10"
-                  />
-                  <p className="text-lg">
-                    {weather.main.temp}°C, {weather.weather[0].description}
-                  </p>
-                </div>
-              ) : weatherError ? (
-                <p className="text-sm text-base-content">{weatherError}</p>
-              ) : (
-                <p className="text-sm text-base-content">Loading weather...</p>
-              )}
-            </div>
-          </div>
-        </motion.section> */}
+  {/* Weather */}
         <motion.section
           className="card bg-base-100 shadow-2xl mb-10 rounded-2xl border border-base-300 overflow-hidden"
           initial={{ opacity: 0, scale: 0.95 }}
@@ -261,10 +230,11 @@ const TripPlanDisplay = () => {
                         whileHover="hover"
                         whileTap="tap"
                         onClick={() => {
-                          const address = encodeURIComponent(hotel.hotelAddress || tripDetails.location);
+                          const address = encodeURIComponent(hotel.hotelName || tripDetails.location);
                           window.open(`https://www.booking.com/searchresults.en-gb.html?aid=8020813&amp;ss=${address}`, "_blank");
                         }}
                       >
+                    
                         Book Now
                       </motion.button>
                       <motion.button
@@ -335,10 +305,6 @@ const TripPlanDisplay = () => {
     </div>
   </div>
 </motion.section>
-
-
-
-
         {/* Itinerary */}
         <section>
         <div className="flex items-center justify-between ">

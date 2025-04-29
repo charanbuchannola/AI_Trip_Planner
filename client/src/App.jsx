@@ -25,6 +25,7 @@ const App = () => {
         <Route path="/themes" element={<Themes />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/travel-preferences" element={<EnhancedTravelForm />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/trip-display/:tripId" element={<TripPlanDisplay />} />
 
