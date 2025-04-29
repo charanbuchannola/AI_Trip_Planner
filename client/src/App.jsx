@@ -12,6 +12,7 @@ import { useTheme } from "./components/context/ThemeContext";
 import Themes from "./components/Themes/Themes";
 import EnhancedTravelForm from "./Pages/TravelForm";
 import TripPlanDisplay from "./Pages/TripPlanDisplay";
+import Chat from "./Pages/Chat";
 
 const App = () => {
   const { theme } = useTheme();
@@ -24,9 +25,9 @@ const App = () => {
         <Route path="/themes" element={<Themes />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route path="/travel-preferences" element={<EnhancedTravelForm />} />
-        {/* <Route path="/trip-display/" element={<TripPlanDisplay />} /> */}
+        <Route path="/chat" element={<Chat />} />
         <Route path="/trip-display/:tripId" element={<TripPlanDisplay />} />
+
       </Routes>
     </div>
   );

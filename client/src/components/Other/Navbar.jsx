@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Home, LogIn, LogOut, Moon, PlaneTakeoff, Settings, ThermometerSun, User } from "lucide-react"; // Import icons
+import { Home, LogIn, LogOut, Moon, PhoneCall, PlaneTakeoff, Settings, ThermometerSun, User } from "lucide-react"; // Import icons
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,6 +41,10 @@ export default function Navbar() {
           <Link to="/" className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl btn-ghost gap-2 transition-colors">
               <Home className="text-primary-300" />
               <span className="hidden sm:inline">Home</span>
+            </Link> 
+          <Link to="/chat" className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl btn-ghost gap-2 transition-colors">
+              <PhoneCall className="text-primary-300" />
+              <span className="hidden sm:inline">Customer Service</span>
             </Link> 
             <Link to="/themes" className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl btn-ghost gap-2 transition-colors">
               <Moon className="text-primary-300" />

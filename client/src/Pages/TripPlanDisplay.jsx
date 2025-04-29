@@ -335,6 +335,10 @@ const TripPlanDisplay = () => {
     </div>
   </div>
 </motion.section>
+
+
+
+
         {/* Itinerary */}
         <section>
         <div className="flex items-center justify-between ">
