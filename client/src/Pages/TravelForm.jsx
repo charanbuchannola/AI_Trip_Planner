@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
-import { Plane, Wallet, Users, MapPin, Calendar, Globe, Search, ChevronRight } from "lucide-react";
+import { Plane, User, Heart, Users, Group , PiggyBank, Wallet, Gem, MapPin, Calendar, Globe, Search, ChevronRight } from "lucide-react";
 import Loader from "../components/Other/Loader";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import TiltedCard from "../components/ui/ReactBIt/TiltedCard";
@@ -26,21 +26,21 @@ export default function EnhancedTravelForm() {
     {
       id: 1,
       value: "cheap",
-      icon: "https://i.pinimg.com/736x/54/0a/de/540adeb04c6097f94fb20a2232869166.jpg",
+      icon: <PiggyBank/>,
       label: "Budget",
       description: "Affordable options",
     },
     {
       id: 2,
       value: "moderate",
-      icon: "https://i.pinimg.com/736x/a8/0c/e9/a80ce9b1eaf3aff679b4c0afac00688c.jpg",
+      icon: <Wallet/>,
       label: "Moderate",
       description: "Mid-range comfort",
     },
     {
       id: 3,
       value: "luxary",
-      icon: "https://i.pinimg.com/736x/0d/d0/86/0dd086ad5519a3133ffa6b08d81ee0b0.jpg",
+      icon: <Gem/>,
       label: "Luxury",
       description: "Premium experience",
     },
@@ -50,32 +50,33 @@ export default function EnhancedTravelForm() {
     {
       id: 1,
       value: "just_me",
-      icon: "https://i.pinimg.com/736x/9f/9b/a6/9f9ba670e6cfb23b91953f5f67ddd46a.jpg",
+      icon: <User/>,
       label: "Solo",
       description: "Just me",
     },
     {
       id: 2,
       value: "couple",
-      icon: "https://i.pinimg.com/736x/12/eb/13/12eb134d96d33d1a4fc5010624788097.jpg",
+      icon: <Heart/>,
       label: "Couple",
       description: "Romantic getaway",
     },
     {
       id: 3,
       value: "family",
-      icon: "https://i.pinimg.com/736x/2c/a8/6b/2ca86ba7d8454054d0ad1e472423ba3a.jpg",
+      icon: <Users/>,
       label: "Family",
       description: "With kids",
     },
     {
       id: 4,
       value: "friends",
-      icon: "https://i.pinimg.com/736x/0d/47/8e/0d478e2c7000ef5d6b9becbb5bcd838a.jpg",
+      icon: <Group/>,
       label: "Friends",
       description: "Group adventure",
     },
   ];
+ 
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -236,6 +237,61 @@ export default function EnhancedTravelForm() {
     duration: 0.5,
   };
 
+
+  //  custom styles for the  google
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      backgroundColor: "transparent",
+      border: "none", // Light border color
+      boxShadow: "none",
+      width: "100%",
+      minHeight: "3rem",
+      borderRadius: "0.5rem",
+      "&:hover": {
+        borderColor: "#3b82f6", // Blue border on hover
+      },
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      fontSize: "1em",
+      color: "#fffff", // Slate-400 for placeholder
+    }),
+    input: (provided) => ({
+      ...provided,
+      color: "#fffff", // Slate-800 for input text
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? "#dbeafe" : "#FFDBDB", // Light blue bg when focused
+      color: "#000000", // Slate-800 for text
+      padding: "10px 12px",
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+      "&:hover": {
+        backgroundColor: "#bfdbfe", // Slightly darker blue on hover
+      },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: "0.5rem",
+      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      marginTop: "4px",
+      zIndex: 10,
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#fffff", // Slate-800 for selected value
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      color: "#00000", // Slate-500 for dropdown arrow
+    }),
+    indicatorSeparator: () => ({
+      display: "none", // Hide the separator
+    }),
+  };
+
   // Progress indicator
   const renderProgressSteps = () => {
     return (
@@ -294,40 +350,36 @@ export default function EnhancedTravelForm() {
               }`}
               data-tip={errors.destination}
             >
-              <div className="input-group">
-                <span className="flex items-center px-3">
-                  <Search size={18} />
-                </span>
-                <GooglePlacesAutocomplete
-                  apiKey={API_KEY}
-                  selectProps={{
-                    value: destination,
-                    onChange: (value) => {
-                      setDestination(value);
-                      setErrors({ ...errors, destination: "" });
-                    },
-                    placeholder: "Search for a city or landmark...",
-                    styles: {
-                      control: (provided) => ({
-                        ...provided,
-                        backgroundColor: "transparent",
-                        border: "0.2px solid", // Uses theme border color
-                        boxShadow: "none",
-                        width: "100%",
-                        minHeight: "3rem",
-                        borderRadius: "0.5rem",
-                      }),
-                      placeholder: (provided) => ({
-                        ...provided,
-                        fontSize: "1em",
-                      }),
-                      input: (provided) => ({
-                        ...provided,
-                      }),
-                    },
-                  }}
-                />
-              </div>
+               <div className="relative w-full">
+      <div className="flex items-center w-full border border-gray-200  rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
+        <div className="flex-shrink-0 pl-3 text-gray-400">
+          <Search size={18} />
+        </div>
+        
+        <div className="flex-grow">
+          <GooglePlacesAutocomplete
+            apiKey={API_KEY}
+            selectProps={{
+              value: destination,
+              onChange: (value) => {
+                setDestination(value);
+                setErrors({ ...errors, destination: "" });
+              },
+              placeholder: "Search for a city or landmark...",
+              styles: customStyles,
+              components: {
+                DropdownIndicator: () => null, // Remove the dropdown arrow
+              },
+              isClearable: true,
+            }}
+          />
+        </div>
+      </div>
+      
+      {errors.destination && (
+        <p className="mt-1 text-sm text-red-600">{errors.destination}</p>
+      )}
+    </div>
             </div>
           </motion.div>
         </div>
@@ -355,7 +407,7 @@ export default function EnhancedTravelForm() {
                     setDays((index + 1).toString());
                     setErrors({ ...errors, days: "" });
                   }}
-                  className={`btn btn-circle ${
+                  className={`btn btn-circle hover:scale-105 transition-all delay-150 duration-300 ${
                     days === (index + 1).toString() ? "btn-primary" : "btn-outline"
                   } w-16 h-16`}
                 >
@@ -421,29 +473,25 @@ export default function EnhancedTravelForm() {
                       : "hover:shadow-lg"
                   }`}
                 >
-                  <div className="items-center text-center p-4">
-                    <TiltedCard
-                      className="object-cover"
-                      imageSrc={option.icon}
-                      altText={option.description}
-                      captionText={option.label}
-                      containerHeight="200px"
-                      containerWidth="200px"
-                      imageHeight="200px"
-                      imageWidth="200px"
-                      rotateAmplitude={12}
-                      scaleOnHover={1}
-                      showMobileWarning={false}
-                      showTooltip={true}
-                      displayOverlayContent={true}
-                      overlayContent={
-                        <p className="tilted-card-demo-text">
-                          {option.label}
-                          <br />
-                          {option.description}
-                        </p>
-                      }
-                    />
+                  <div className="p-4 mx-auto ">
+      <div className="relative w-[170px] h-[140px] overflow-hidden bg-primary/20 rounded-xl shadow-lg group cursor-pointer transform transition-transform duration-300 hover:scale-105 hover:rotate-1 flex items-center justify-center">
+        {/* Icon display */}
+        <div className="text-primary gap-2  text-4xl transition-all duration-300 group-hover:opacity-30 flex items-center justify-center">
+        <p className="text-center text-2xl">{option.icon}</p>
+                  <h3 className="text-center text-2xl font-medium ">
+                    {option.label}
+                  </h3>
+
+        </div>
+        
+        {/* Hover overlay with full information */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/70 text-white text-center px-2">
+          <p className="text-lg font-semibold mb-1">{option.label}</p>
+          {option.description && (
+            <p className="text-xs leading-tight">{option.description}</p>
+          )}
+        </div>
+      </div>
                   </div>
                   {budget === option.value && (
                     <div className="absolute bottom-2 left-0 right-0 flex justify-center">
@@ -503,42 +551,38 @@ export default function EnhancedTravelForm() {
             className={`${errors.travelGroup ? "tooltip tooltip-open tooltip-error" : ""}`}
             data-tip={errors.travelGroup}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2  sm:grid-cols-2 md:grid-cols-4 gap-6">
               {SelectTravelsList.map((option) => (
                 <motion.div
                   whileHover={{ scale: 1.03, y: -5 }}
                   whileTap={{ scale: 0.98 }}
                   key={option.id}
                   onClick={() => handleCardClick("travelGroup", option.value)}
-                  className={`cursor-pointer transition-all rounded ${
+                  className={` mx-auto cursor-pointer transition-all rounded ${
                     travelGroup === option.value
                       ? "ring-4 ring-primary ring-opacity-50 transform -translate-y-2"
                       : "hover:shadow-lg"
                   }`}
                 >
-                  <div className="items-center text-center p-4">
-                    <TiltedCard
-                      className="object-cover"
-                      imageSrc={option.icon}
-                      altText={option.description}
-                      captionText={option.label}
-                      containerHeight="150px"
-                      containerWidth="150px"
-                      imageHeight="150px"
-                      imageWidth="150px"
-                      rotateAmplitude={12}
-                      scaleOnHover={1}
-                      showMobileWarning={false}
-                      showTooltip={true}
-                      displayOverlayContent={true}
-                      overlayContent={
-                        <p className="tilted-card-demo-text">
-                          {option.label}
-                          <br />
-                          {option.description}
-                        </p>
-                      }
-                    />
+                  <div className="p-4 mx-auto ">
+      <div className="relative w-[170px] h-[140px] overflow-hidden bg-primary/20 rounded-xl shadow-lg group cursor-pointer transform transition-transform duration-300 hover:scale-105 hover:rotate-1 flex items-center justify-center">
+        {/* Icon display */}
+        <div className="text-primary gap-2  text-4xl transition-all duration-300 group-hover:opacity-30 flex items-center justify-center">
+        <p className="text-center text-2xl">{option.icon}</p>
+                  <h3 className="text-center text-2xl font-medium ">
+                    {option.label}
+                  </h3>
+
+        </div>
+        
+        {/* Hover overlay with full information */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/70 text-white text-center px-2">
+          <p className="text-lg font-semibold mb-1">{option.label}</p>
+          {option.description && (
+            <p className="text-xs leading-tight">{option.description}</p>
+          )}
+        </div>
+      </div>
                   </div>
                   {travelGroup === option.value && (
                     <div className="absolute bottom-2 left-0 right-0 flex justify-center">
@@ -575,20 +619,21 @@ export default function EnhancedTravelForm() {
 
   // Render step 4: Summary
   const renderStep4 = () => {
-    const getImageForValue = (type, value) => {
+    const getIconForValue = (type, value) => {
       if (type === "budget") {
-        return SelectBudgetOptions.find(option => option.value === value)?.icon || "";
+        return SelectBudgetOptions.find(option => option.value === value)?.icon || null;
       } else if (type === "travelGroup") {
-        return SelectTravelsList.find(option => option.value === value)?.icon || "";
+        return SelectTravelsList.find(option => option.value === value)?.icon || null;
       }
-      return "";
+      return null;
     };
+    
 
-    const getBudgetLabel = (value) => {
+    const getLabelForBudget = (value) => {
       return SelectBudgetOptions.find(option => option.value === value)?.label || value;
     };
-
-    const getTravelGroupLabel = (value) => {
+    
+    const getLabelForTravelGroup = (value) => {
       return SelectTravelsList.find(option => option.value === value)?.label || value;
     };
 
@@ -618,9 +663,9 @@ export default function EnhancedTravelForm() {
               transition={{ delay: 0.1 }}
               className="flex flex-col md:flex-row items-center gap-4 mb-4"
             >
-              <div className="avatar">
+              <div className=" flex items-center">
                 <div className="w-16 h-16 rounded-full mask mask-squircle flex items-center justify-center">
-                  <Globe size={32} className="text-primary" />
+                  <Globe size={32} className="text-primary animate-bounce" />
                 </div>
               </div>
               <div>
@@ -639,14 +684,12 @@ export default function EnhancedTravelForm() {
                 className="flex items-center gap-4"
               >
                 <div className="avatar">
-                  <div className="w-16 h-16 rounded-lg">
-                    <img src={getImageForValue("budget", budget)} alt={budget} />
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold">Budget</h4>
-                  <p>{getBudgetLabel(budget)}</p>
-                </div>
+    {getIconForValue("budget", budget)}
+</div>
+<div>
+  <h4 className="text-lg font-semibold">Budget</h4>
+  <p>{getLabelForBudget(budget)}</p>
+</div>
               </motion.div>
 
               <motion.div 
@@ -656,13 +699,13 @@ export default function EnhancedTravelForm() {
                 className="flex items-center gap-4"
               >
                 <div className="avatar">
-                  <div className="w-16 h-16 rounded-lg">
-                    <img src={getImageForValue("travelGroup", travelGroup)} alt={travelGroup} />
-                  </div>
+                <div className="text-3xl text-primary">
+  {getIconForValue("travelGroup", "couple")}
+</div>
                 </div>
                 <div>
                   <h4 className="text-lg font-semibold">Travel Group</h4>
-                  <p>{getTravelGroupLabel(travelGroup)}</p>
+                  <p>{getLabelForTravelGroup(travelGroup)}</p>
                 </div>
               </motion.div>
             </div>
@@ -711,8 +754,8 @@ export default function EnhancedTravelForm() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden py-10 px-4">
-      <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
+    <div className="min-h-screen overflow-x-hidden min-w-screen py-10 px-4">
+      <div className="flex flex-col justify-between lg:flex-row  overflow-x-hidden max-w-7xl mx-auto">
         {/* Form Side */}
         <motion.div
           initial="hidden"
@@ -752,16 +795,16 @@ export default function EnhancedTravelForm() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="lg:w-1/3 hidden lg:block relative h-auto"
+          className="lg:w-1/4 hidden lg:block relative h-auto"
         >
-          <div className="sticky top-10">
-            <div className="card shadow-2xl overflow-hidden">
+          <div className="sticky top-10 w-full">
+            <div className="card shadow-2xl full  overflow-hidden">
               <TiltedCard
                 className="object-cover"
                 imageSrc="https://i.pinimg.com/736x/f9/af/73/f9af73ea72f0f484bf2c9c00a7a1a1d2.jpg"
                 altText="Travel Adventure Map"
                 captionText="AI Trip Planner"
-                containerHeight="600px"
+                containerHeight="500px"
                 containerWidth="100%"
                 imageHeight="100%"
                 imageWidth="100%"
@@ -771,10 +814,7 @@ export default function EnhancedTravelForm() {
                 showTooltip={true}
                 displayOverlayContent={true}
                 overlayContent={
-                  <div className="flex flex-col items-center">
-                    <h3 className="text-2xl font-bold">Discover Amazing Places</h3>
-                    <p className="mt-2">Your adventure awaits</p>
-                  </div>
+                 <p></p>
                 }
               />
             </div>
@@ -785,7 +825,7 @@ export default function EnhancedTravelForm() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="mt-6 card shadow-md p-4"
+                className=" card shadow-md p-4"
               >
                 <div className="stat">
                   <div className="stat-title">Selected Destination</div>

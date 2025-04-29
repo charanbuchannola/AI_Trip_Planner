@@ -16,7 +16,7 @@ import TripPlanDisplay from "./Pages/TripPlanDisplay";
 const App = () => {
   const { theme } = useTheme();
   return (
-    <div data-theme={theme} className="w-screen h-screen">
+    <div data-theme={theme} className="w-screen h-screen overflow-x-hidden">
       {/* <Loader/> */}
       <Navbar />
       <Routes>

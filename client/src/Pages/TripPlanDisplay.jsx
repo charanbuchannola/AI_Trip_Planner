@@ -5,77 +5,76 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { PlanContext } from "../components/context/TripContext";
 import { axiosInstance } from "../components/Axios/axios";
 import Loader from "../components/Other/Loader";
+import TripWeather from "./TripWeather";
 
 const TripPlanDisplay = () => {
   const { tripId } = useParams();
   const { tripPlan, setTripPlan } = useContext(PlanContext);
   const [loading, setLoading] = useState(true);
   const [openDay, setOpenDay] = useState(null);
-  const [weather, setWeather] = useState(null); // State for weather data
-  const [weatherError, setWeatherError] = useState(null); // State for weather errors
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  // Weather API key (replace with your OpenWeatherMap API key)
-  const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY; // Get from openweathermap.org
-  const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
+    // Weather API key (replace with your OpenWeatherMap API key)
+    // const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY; // Get from openweathermap.org
+    // const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 
-  useEffect(() => {
-    const fetchTripDetails = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Please log in first.");
-        navigate("/login");
-        return;
-      }
-      setLoading(true);
+    useEffect(() => {
+      const fetchTripDetails = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Please log in first.");
+          navigate("/login");
+          return;
+        }
+        setLoading(true);
 
-      try {
-        const response = await axiosInstance.get(`/tripplan/${tripId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        try {
+          const response = await axiosInstance.get(`/tripplan/${tripId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-        const { trip } = response.data;
+          const { trip } = response.data;
 
-        setTripPlan({
-          generatedPlan: trip.generatedPlan,
-          tripDetails: {
-            location: trip.destination,
-            duration: trip.days + " days",
-            travelers: trip.travelGroup,
-            budget: trip.budget,
-          },
-        });
-      } catch (error) {
-        console.error("Error fetching trip details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+          setTripPlan({
+            generatedPlan: trip.generatedPlan,
+            tripDetails: {
+              location: trip.destination,
+              duration: trip.days + " days",
+              travelers: trip.travelGroup,
+              budget: trip.budget,
+            },
+          });
+        } catch (error) {
+          console.error("Error fetching trip details:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    const fetchWeather = async () => {
-      if (!tripPlan?.tripDetails?.location) return;
-      try {
-        const response = await axiosInstance.get(WEATHER_API_URL, {
-          params: {
-            q: tripPlan.tripDetails.location,
-            appid: WEATHER_API_KEY,
-            units: "metric", // Use Celsius
-          },
-        });
-        console.log("Weather data:", response.data);
-        setWeather(response.data);
-        setWeatherError(null);
-      } catch (error) {
-        console.error("Error fetching weather:", error);
-        setWeatherError("Unable to fetch weather data.");
-      }
-    };
+      // const fetchWeather = async () => {
+      //   if (!tripPlan?.tripDetails?.location) return;
+      //   try {
+      //     const response = await axiosInstance.get(WEATHER_API_URL, {
+      //       params: {
+      //         q: tripPlan.tripDetails.location,
+      //         appid: WEATHER_API_KEY,
+      //         units: "metric", // Use Celsius
+      //       },
+      //     });
+      //     console.log("Weather data:", response.data);
+      //     setWeather(response.data);
+      //     setWeatherError(null);
+      //   } catch (error) {
+      //     console.error("Error fetching weather:", error);
+      //     setWeatherError("Unable to fetch weather data.");
+      //   }
+      // };
 
-    fetchTripDetails();
-    fetchWeather();
-  }, [tripId, setTripPlan, navigate, tripPlan?.tripDetails?.location]);
+      fetchTripDetails();
+      // fetchWeather();
+    }, [tripId, setTripPlan, navigate, tripPlan?.tripDetails?.location]);
 
 
 
@@ -142,7 +141,7 @@ const TripPlanDisplay = () => {
   return (
     <div className="max-h-screen overflow-x-hidden relative">
       <div className="max-w-7xl mt-15 mx-auto py-12 px-6">
-        {/* Weather Widget */}
+        {/* Weather Widget
         <motion.section
           className="card bg-base-100 shadow-xl mb-10 rounded-2xl border border-base-300 overflow-hidden"
           initial={{ opacity: 0, y: -50 }}
@@ -173,6 +172,14 @@ const TripPlanDisplay = () => {
               )}
             </div>
           </div>
+        </motion.section> */}
+        <motion.section
+          className="card bg-base-100 shadow-2xl mb-10 rounded-2xl border border-base-300 overflow-hidden"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+           <TripWeather tripId={tripId} tripPlan={tripPlan} setTripPlan={setTripPlan}/>
         </motion.section>
      
 
@@ -214,7 +221,7 @@ const TripPlanDisplay = () => {
             <FaStar className="mr-3" /> Luxurious Stays 🏨
           </h2>
           <motion.div
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+            className="grid grid-cols-1 lg:grid-cols-3   gap-8"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -231,23 +238,23 @@ const TripPlanDisplay = () => {
                     <img
                       src={hotel.hotelImageUrl || "https://via.placeholder.com/150?text=Image+Not+Available"}
                       alt={hotel.hotelName || "Hotel"}
-                      className="w-full h-64 object-cover transition-transform duration-500 hover:scale-105"
+                      className="w-full h-48 object-cover transition-transform duration-500 hover:scale-105"
                       onError={(e) => (e.target.src = "https://via.placeholder.com/150?text=Image+Not+Available")}
                     />
                     <div className="absolute top-4 right-4 badge bg-base-300">
                       {hotel.rating || "N/A"} <FaStar className="ml-1" />
                     </div>
                   </figure>
-                  <div className="card-body p-6">
+                  <div className="card-body px-6">
                     <h3 className="text-2xl font-bold">{hotel.hotelName || "Unknown Hotel"}</h3>
-                    <p className="flex items-center mt-2">
+                    <p className="flex items-center ">
                       <FaMapMarkerAlt className="mr-2" /> {hotel.hotelAddress || "N/A"}
                     </p>
-                    <p className="font-semibold text-lg mt-2 flex items-center">
+                    <p className="font-semibold text-lg  flex items-center">
                       <FaDollarSign className="mr-2" /> {hotel.price || "N/A"}
                     </p>
-                    <p className="text-sm mt-3 line-clamp-2">{hotel.description || "No description available"}</p>
-                    <div className="card-actions mt-4 flex justify-between">
+                    <p className="text-sm  line-clamp-2">{hotel.description || "No description available"}</p>
+                    <div className="card-actions flex justify-between">
                       <motion.button
                         className="btn bg-base-300 rounded-full px-6"
                         variants={buttonVariants}
@@ -281,9 +288,6 @@ const TripPlanDisplay = () => {
             )}
           </motion.div>
         </section>
-
-
-
 {/* More Options of Hotel */}
 <motion.section
   className="card bg-base-100 shadow-xl mb-10 rounded-2xl border border-base-300 overflow-hidden"
@@ -295,13 +299,13 @@ const TripPlanDisplay = () => {
     <FaBuilding className="text-4xl text-purple-600" />
     <div className="flex items-center justify-between flex-1">
      <div>
-     <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+     <h3 className="text-2xl font-bold   mb-2">
         Find More Options in{" "}
         <span className="text-purple-600">
           {tripDetails?.location || "N/A"}
         </span>
       </h3>
-      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+      <p className="text-sm  mb-4">
         Discover the best hotel deals and stays tailored for your trip.
       </p>
      </div>
@@ -331,13 +335,6 @@ const TripPlanDisplay = () => {
     </div>
   </div>
 </motion.section>
-
-
-      
-
-
-
-
         {/* Itinerary */}
         <section>
         <div className="flex items-center justify-between ">
