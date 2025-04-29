@@ -29,8 +29,33 @@ export default function Hero() {
       link: '/travel-preferences',
       title: 'Relax on Bali’s Serene Beaches',
       description: 'Unwind with crystal-clear waters, lush jungles, and vibrant local culture in paradise'
+    },
+    {
+      image: '/images/item4.jpg',
+      link: '/travel-preferences',
+      title: 'Wander Through Tokyo’s Neon Nights',
+      description: 'Dive into futuristic skylines, ancient temples, and world-class cuisine in Japan’s capital.'
+    },
+    {
+      image: '/images/item5.jpg',
+      link: '/travel-preferences',
+      title: 'Experience the Magic of Morocco',
+      description: 'From desert dunes to vibrant souks, embrace the charm and culture of North Africa.'
+    },
+    {
+      image: '/images/item6.jpg',
+      link: '/travel-preferences',
+      title: 'Cruise Along the Amalfi Coast',
+      description: 'Enjoy scenic cliffside villages, turquoise waters, and mouthwatering Italian dishes.'
+    },
+    {
+      image: '/images/item7.jpg',
+      link: '/travel-preferences',
+      title: 'Safari Through the Heart of Kenya',
+      description: 'Witness the majesty of wildlife in their natural habitat across endless savannas.'
     }
   ];
+  
   return (
     <div  className=" w-full md:flex justify-center items-center h-screen overflow-hidden">
     

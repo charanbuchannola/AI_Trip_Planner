@@ -230,8 +230,8 @@ const TripPlanDisplay = () => {
                         whileHover="hover"
                         whileTap="tap"
                         onClick={() => {
-                          const address = encodeURIComponent(hotel.hotelName || tripDetails.location);
-                          window.open(`https://www.booking.com/searchresults.en-gb.html?aid=8020813&amp;ss=${address}`, "_blank");
+                          const hotelName = encodeURIComponent(hotel.hotelName || tripDetails.location);
+                          window.open(`https://www.booking.com/searchresults.en-gb.html?aid=8020813&amp;ss=${hotelName}`, "_blank");
                         }}
                       >
                     

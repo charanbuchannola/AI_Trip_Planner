@@ -170,8 +170,8 @@ const TripWeather = ({ tripId, tripPlan, setTripPlan }) => {
   };
 
   return (
-    <div className={`rounded-lg shadow-md p-4 mt-4 ${weather ? getWeatherBackground(weather.weather[0].id) : ""} transition-colors duration-500`}>
-      <h3 className="text-lg font-semibold mb-2 flex items-center">
+    <div className={`rounded-lg text-black shadow-md p-4  ${weather ? getWeatherBackground(weather.weather[0].id) : ""} transition-colors duration-500`}>
+      <h3 className="text-lg  font-semibold mb-2 flex items-center">
         <CloudSun className="mr-2 h-5 w-5 text-blue-500" />
         Weather in {tripPlan?.tripDetails?.location || "Loading location..."}
       </h3>
@@ -218,12 +218,12 @@ const TripWeather = ({ tripId, tripPlan, setTripPlan }) => {
               <div className="text-gray-600">Feels like</div>
               <div className="font-medium">{Math.round(weather.main.feels_like)}°C</div>
             </div>
-            <div className="flex flex-col items-center p-2 bg-white/70 rounded-md shadow-sm">
+            <div className="flex flex-col items-center p-2 bg-secondary/40 rounded-md shadow-sm">
               <Droplets className="h-4 w-4 text-blue-500 mb-1" />
               <div className="text-gray-600">Humidity</div>
               <div className="font-medium">{weather.main.humidity}%</div>
             </div>
-            <div className="flex flex-col items-center p-2 bg-white/70 rounded-md shadow-sm">
+            <div className="flex flex-col items-center p-2 bg-primary/40 rounded-md shadow-sm">
               <Wind className="h-4 w-4 text-blue-500 mb-1" />
               <div className="text-gray-600">Wind</div>
               <div className="font-medium">{Math.round(weather.wind.speed)} m/s</div>

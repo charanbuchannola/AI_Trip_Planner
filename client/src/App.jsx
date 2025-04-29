@@ -9,7 +9,6 @@ import Hero from "./Pages/Hero";
 
 import { useTheme } from "./components/context/ThemeContext";
 
-import Themes from "./components/Themes/Themes";
 import EnhancedTravelForm from "./Pages/TravelForm";
 import TripPlanDisplay from "./Pages/TripPlanDisplay";
 import Chat from "./Pages/Chat";
@@ -22,7 +21,7 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<Hero />} />
-        <Route path="/themes" element={<Themes />} />
+     
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/travel-preferences" element={<EnhancedTravelForm />} />
