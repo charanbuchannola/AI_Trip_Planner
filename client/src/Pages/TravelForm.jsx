@@ -1,13 +1,13 @@
 import { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
-import { Plane, Wallet, Users, MapPin, Calendar } from "lucide-react";
+import { Plane, Wallet, Users, MapPin, Calendar, Globe, Search, ChevronRight } from "lucide-react";
 import Loader from "../components/Other/Loader";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import TiltedCard from "../components/ui/ReactBIt/TiltedCard";
 import { useNavigate } from "react-router-dom";
 import { PlanContext } from "../components/context/TripContext";
 import { axiosInstance } from "../components/Axios/axios";
-const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY; // Replace with your actual API key
+const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
 export default function EnhancedTravelForm() {
   const [destination, setDestination] = useState("");
@@ -18,9 +18,9 @@ export default function EnhancedTravelForm() {
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { setTripPlan } = useContext(PlanContext);
+  const [formStep, setFormStep] = useState(1);
 
   const navigate = useNavigate();
-
 
   const SelectBudgetOptions = [
     {
@@ -77,25 +77,20 @@ export default function EnhancedTravelForm() {
     },
   ];
 
-
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = localStorage.getItem("token");
-      // console.log(`token: ${token}`);
       if (!token) {
         alert("Please log in first.");
-        navigate("/login"); // or redirect to login
+        navigate("/login");
         return;
       }
       try {
-        const response = await axiosInstance.get(
-          "/user/check-auth",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axiosInstance.get("/user/check-auth", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.status === 200) {
           setIsAuthenticated(true);
         }
@@ -116,8 +111,32 @@ export default function EnhancedTravelForm() {
     } else if (type === "travelGroup") {
       setTravelGroup(value);
       setErrors({ ...errors, travelGroup: "" });
-
     }
+  };
+
+  const validateStep = (step) => {
+    const newErrors = {};
+    if (step === 1) {
+      if (!destination) newErrors.destination = "Destination is required.";
+      if (!days) newErrors.days = "Number of days is required.";
+    } else if (step === 2) {
+      if (!budget) newErrors.budget = "Budget selection is required.";
+    } else if (step === 3) {
+      if (!travelGroup) newErrors.travelGroup = "Travel group selection is required.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const nextStep = () => {
+    if (validateStep(formStep)) {
+      setFormStep(formStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    setFormStep(formStep - 1);
   };
 
   const handleSubmit = async (e) => {
@@ -127,12 +146,12 @@ export default function EnhancedTravelForm() {
       return;
     }
 
+    // Final validation of all fields
     const newErrors = {};
     if (!destination) newErrors.destination = "Destination is required.";
     if (!days) newErrors.days = "Number of days is required.";
     if (!budget) newErrors.budget = "Budget selection is required.";
-    if (!travelGroup)
-      newErrors.travelGroup = "Travel group selection is required.";
+    if (!travelGroup) newErrors.travelGroup = "Travel group selection is required.";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -152,7 +171,7 @@ export default function EnhancedTravelForm() {
       const response = await axiosInstance.post(
         "tripplan/createtrip",
         {
-          destination : destination?.label,  
+          destination: destination?.label,
           days,
           budget,
           travelGroup,
@@ -165,18 +184,14 @@ export default function EnhancedTravelForm() {
       );
 
       const tripData = response.data.trip;
-      setTripPlan(tripData); 
+      setTripPlan(tripData);
       const tripId = response.data.trip._id;
-      console.log(`tripId after tipform submit: ${tripId}`);
-      navigate(`/trip-display/${tripId}`); 
-    
+      navigate(`/trip-display/${tripId}`);
     } catch (error) {
       console.error("Failed to create trip:", error);
-      alert(
-        error?.response?.data?.message ||"Failed to create trip. Please try again." );
+      alert(error?.response?.data?.message || "Failed to create trip. Please try again.");
     } finally {
       setLoading(false);
-     
     }
 
     // Reset form
@@ -184,7 +199,6 @@ export default function EnhancedTravelForm() {
     setDays("");
     setBudget("");
     setTravelGroup("");
-   
   };
 
   const containerVariants = {
@@ -209,327 +223,580 @@ export default function EnhancedTravelForm() {
     },
   };
 
-  return (
-    
-      loading ? (<Loader />) : (
-        <div className=" overflow-x-hidden max-h-screen  md:flex w-full py-12 px-4">
+  // Page transition variants
+  const pageVariants = {
+    initial: { opacity: 0, x: 100 },
+    in: { opacity: 1, x: 0 },
+    out: { opacity: 0, x: -100 },
+  };
+
+  const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.5,
+  };
+
+  // Progress indicator
+  const renderProgressSteps = () => {
+    return (
+      <div className="w-full flex justify-center mb-6">
+        <ul className="steps steps-horizontal w-full max-w-md">
+          <li className={`step ${formStep >= 1 ? "step-primary" : ""}`}>
+            Destination
+          </li>
+          <li className={`step ${formStep >= 2 ? "step-primary" : ""}`}>
+            Budget
+          </li>
+          <li className={`step ${formStep >= 3 ? "step-primary" : ""}`}>
+            Travel Group
+          </li>
+          <li className={`step ${formStep >= 4 ? "step-primary" : ""}`}>
+            Summary
+          </li>
+        </ul>
+      </div>
+    );
+  };
+
+  // Render step 1: Destination and Days
+  const renderStep1 = () => {
+    return (
       <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="max-w-4xl mx-auto  shadow-2xl rounded-3xl mt-20 overflow-x-hidden overflow-y-scroll"
+        initial="initial"
+        animate="in"
+        exit="out"
+        variants={pageVariants}
+        transition={pageTransition}
+        className="space-y-8"
       >
-        {/* Hero Banner */}
-        <div className=" p-8  relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full opacity-10">
-            <div className="absolute w-40 h-40 rounded-full  top-4 right-4"></div>
-            <div className="absolute w-20 h-20 rounded-full  bottom-4 left-10"></div>
-            <div className="absolute w-32 h-32 rounded-full  right-1/3"></div>
-          </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h2 className="text-2xl font-bold mb-2">Where would you like to go?</h2>
+          <p className="opacity-75">Start by choosing your destination and trip duration</p>
+        </motion.div>
 
-          <motion.div variants={itemVariants} className="relative z-10">
-            <h1 className="text-4xl font-bold mb-2 flex items-center">
-              <Plane className="w-8 h-8 mr-3 inline" />
-              Travel Preferences
-            </h1>
-            <p className="text-lg opacity-90 max-w-lg">
-              Tell us about your dream vacation and we'll create the perfect
-              itinerary tailored just for you
-            </p>
-          </motion.div>
-        </div>
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Destination Input */}
+          <motion.div variants={itemVariants} className="w-full form-control">
+            <label className="label">
+              <span className="label-text text-lg flex items-center">
+                <MapPin className="w-5 h-5 mr-2 text-blue-500" />
+                Destination
+              </span>
+            </label>
 
-        {/* Form Content */}
-        <div className="p-8">
-         
-            <motion.form
-              variants={containerVariants}
-              onSubmit={handleSubmit}
-              className="space-y-8"
+            <div
+              className={`relative w-full ${
+                errors.destination ? "tooltip tooltip-open tooltip-error" : ""
+              }`}
+              data-tip={errors.destination}
             >
-              {/*  both days and destination */}
-
-              <div className="md:flex items-center justify-between gap-4">
-                {/* Destination Input */}
-                <motion.div
-                  variants={itemVariants}
-                  className="w-full md:w-1/2 form-control"
-                >
-                  <label className="label">
-                    <span className="label-text text-lg flex items-center">
-                      <MapPin className="w-5 h-5 mr-2 text-blue-500" />
-                      Destination
-                    </span>
-                  </label>
-
-                  <div
-                    className={`relative w-full  ${
-                      errors.destination
-                        ? "tooltip tooltip-open tooltip-error"
-                        : ""
-                    }`}
-                    data-tip={errors.destination}
-                  >
-                   
-                    <GooglePlacesAutocomplete
+              <div className="input-group">
+                <span className="flex items-center px-3">
+                  <Search size={18} />
+                </span>
+                <GooglePlacesAutocomplete
                   apiKey={API_KEY}
                   selectProps={{
                     value: destination,
-                    onChange: (value) => setDestination(value),
-                        styles: {
-                          control: (provided) => ({
-                            ...provided,
-                            backgroundColor: "transparent",
-                            border: "0.2px solid ", // gray-300
-                            boxShadow: "none",
-                            width: "100%", // force full width
-                            minHeight: "2.5rem", // match Tailwind input height
-                            borderRadius: "0.5rem", // rounded-md
-                            paddingLeft: "0.75rem", // pl-3
-                            paddingRight: "0.75rem", // pr-3
-                          }),
-                          placeholder: (provided) => ({
-                            ...provided,
-                            color: "#9ca3af",
-                            fontSize: "1em", // gray-400
-                          }),
-                          input: (provided) => ({
-                            ...provided,
-                            color: "#FFDBDB",
-                          }),
-                        
-                        },
-                      }}
-                    />
-                  </div>
-                  {
-                        console.log(destination)
-                    }
-                </motion.div>
-
-                {/* Days Input */}
-                <motion.div
-                  variants={itemVariants}
-                  className="w-full md:w-1/2  mt-5 md:mt-0 form-control"
-                >
-                  <label className="label">
-                    <span className="label-text text-lg flex items-center">
-                      <Calendar className="w-5 h-5 mr-2 text-blue-500" />
-                      Duration
-                    </span>
-                  </label>
-
-                  <div
-                    className={`relative w-full ${
-                      errors.days ? "tooltip tooltip-open tooltip-error" : ""
-                    }`}
-                    data-tip={errors.days}
-                  >
-                    <select
-                      className="select select-bordered w-full focus:select-primary"
-                      value={days || "1"}
-                      onChange={(e) => setDays(e.target.value)}
-                    >
-                      <option value="" disabled>
-                        Select number of days
-                      </option>
-                      {[...Array(7)].map((_, index) => (
-                        <option key={index + 1} value={index + 1}>
-                          {index + 1} {index + 1 === 1 ? "day" : "days"}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </motion.div>
+                    onChange: (value) => {
+                      setDestination(value);
+                      setErrors({ ...errors, destination: "" });
+                    },
+                    placeholder: "Search for a city or landmark...",
+                    styles: {
+                      control: (provided) => ({
+                        ...provided,
+                        backgroundColor: "transparent",
+                        border: "0.2px solid", // Uses theme border color
+                        boxShadow: "none",
+                        width: "100%",
+                        minHeight: "3rem",
+                        borderRadius: "0.5rem",
+                      }),
+                      placeholder: (provided) => ({
+                        ...provided,
+                        fontSize: "1em",
+                      }),
+                      input: (provided) => ({
+                        ...provided,
+                      }),
+                    },
+                  }}
+                />
               </div>
+            </div>
+          </motion.div>
+        </div>
 
-              {/* Budget Options */}
-              <motion.div variants={itemVariants} className=" flex flex-col form-control">
-                <label className="label">
-                  <span className="label-text text-lg flex items-center">
-                    <Wallet className="w-5 h-5 mr-2 text-blue-500" />
-                    Budget
-                  </span>
-                </label>
+        {/* Days Input */}
+        <motion.div variants={itemVariants} className="w-full form-control">
+          <label className="label">
+            <span className="label-text text-lg flex items-center">
+              <Calendar className="w-5 h-5 mr-2 text-blue-500" />
+              Duration
+            </span>
+          </label>
 
-                <div
-                  className={`${
-                    errors.budget ? "tooltip tooltip-open tooltip-error" : ""
-                  }`}
-                  data-tip={errors.budget}
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {SelectBudgetOptions.map((option) => (
-                      <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.98 }}
-                        key={option.id}
-                        onClick={() => handleCardClick("budget", option.value)}
-                        className={`card cursor-pointer transition-all ${
-                          budget === option.value
-                            ? "-blue-50 border-2 border-blue-500 shadow-md"
-                            : " hover:shadow-md"
-                        }`}
-                      >
-                        {/* <div className="card-body items-center text-center p-4">
-                          {option.icon}
-                          <h3 className="card-title text-lg mt-2">
-                            {option.label}
-                          </h3>
-                          <p className="text-gray-500 text-sm">
-                            {option.description}
-                          </p>
-                        </div> */}
-
-<div className="  items-center text-center p-4">
-                          <TiltedCard
-                            className="object-cover "
-                            imageSrc={option.icon}
-                            altText={option.description}
-                            captionText={option.label}
-                            containerHeight="200px"
-                            containerWidth="200px"
-                            imageHeight="200px"
-                            imageWidth="200px"
-                            rotateAmplitude={12}
-                            scaleOnHover={1}
-                            showMobileWarning={false}
-                            showTooltip={true}
-                            displayOverlayContent={true}
-                            overlayContent={
-                              <p className="tilted-card-demo-text">
-                                {option.label}
-                                <br />
-                                {option.description}
-                              </p>
-                            }
-                          />
-                        </div>
-                        
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Travel Group Options */}
-              <motion.div variants={itemVariants} className="flex flex-col form-control">
-                <label className="label">
-                  <span className="label-text text-lg flex items-center">
-                    <Users className="w-5 h-5 mr-2 text-blue-500" />
-                    Travel Group
-                  </span>
-                </label>
-                <div
-                  className={`${
-                    errors.travelGroup
-                      ? "tooltip tooltip-open tooltip-error"
-                      : ""
-                  }`}
-                  data-tip={errors.travelGroup}
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    {SelectTravelsList.map((option) => (
-                      <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.98 }}
-                        key={option.id}
-                        onClick={() =>
-                          handleCardClick("travelGroup", option.value)
-                        }
-                        className={` cursor-pointer transition-all rounded  ${
-                          travelGroup === option.value
-                            ? " border-2 border-blue-500 shadow-md"
-                            : " hover:shadow-md"
-                        }`}
-                      >
-                        {/* <div className="card-body items-center text-center p-4">
-                          {option.icon}
-                          <h3 className="card-title text-md mt-1">
-                            {option.label}
-                          </h3>
-                          <p className="text-gray-500 text-sm">
-                            {option.description}
-                          </p>
-                        </div> */}
-
-                        <div className="  items-center text-center p-4">
-                          <TiltedCard
-                            className="object-cover "
-                            imageSrc={option.icon}
-                            altText={option.description}
-                            captionText={option.label}
-                            containerHeight="150px"
-                            containerWidth="150px"
-                            imageHeight="150px"
-                            imageWidth="150px"
-                            rotateAmplitude={12}
-                            scaleOnHover={1}
-                            showMobileWarning={false}
-                            showTooltip={true}
-                            displayOverlayContent={true}
-                            overlayContent={
-                              <p className="tilted-card-demo-text">
-                                {option.label}
-                                <br />
-                                {option.description}
-                              </p>
-                            }
-                          />
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Submit Button */}
-              <motion.div variants={itemVariants}>
+          <div
+            className={`relative w-full ${errors.days ? "tooltip tooltip-open tooltip-error" : ""}`}
+            data-tip={errors.days}
+          >
+            <div className="flex flex-wrap gap-3 justify-center">
+              {[...Array(7)].map((_, index) => (
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  className="btn btn-primary w-full py-3 text-lg font-medium"
+                  key={index + 1}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setDays((index + 1).toString());
+                    setErrors({ ...errors, days: "" });
+                  }}
+                  className={`btn btn-circle ${
+                    days === (index + 1).toString() ? "btn-primary" : "btn-outline"
+                  } w-16 h-16`}
                 >
-                  <Plane className="w-5 h-5 mr-2" /> Generate My Trip
+                  <div className="flex flex-col items-center">
+                    <span className="text-xl font-bold">{index + 1}</span>
+                    <span className="text-xs">{index === 0 ? "day" : "days"}</span>
+                  </div>
                 </motion.button>
-              </motion.div>
-            </motion.form>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="flex justify-end mt-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={nextStep}
+            className="btn btn-primary gap-2"
+          >
+            Next <ChevronRight size={18} />
+          </motion.button>
         </div>
       </motion.div>
+    );
+  };
 
-      {/* Google maps */}
+  // Render step 2: Budget selection
+  const renderStep2 = () => {
+    return (
       <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="max-w-2xl mx-auto -white shadow-2xl  mt-20 overflow-hidden relative"
+        initial="initial"
+        animate="in"
+        exit="out"
+        variants={pageVariants}
+        transition={pageTransition}
+        className="space-y-8"
       >
-        {/* <img
-          src="https://i.pinimg.com/736x/f9/af/73/f9af73ea72f0f484bf2c9c00a7a1a1d2.jpg"
-          className="object-cover w-full h-full"
-          alt=""
-        /> */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h2 className="text-2xl font-bold mb-2">What's your budget range?</h2>
+          <p className="opacity-75">Choose your preferred spending level</p>
+        </motion.div>
 
-        <TiltedCard
-          className="object-cover "
-          imageSrc="https://i.pinimg.com/736x/f9/af/73/f9af73ea72f0f484bf2c9c00a7a1a1d2.jpg"
-          altText="maps "
-          captionText="Ai Trpi Planner"
-          containerHeight="100%"
-          containerWidth="100%"
-          imageHeight="100%"
-          imageWidth="500px"
-          rotateAmplitude={12}
-          scaleOnHover={1}
-          showMobileWarning={false}
-          showTooltip={true}
-          displayOverlayContent={true}
-          overlayContent={<p className="tilted-card-demo-text"></p>}
-        />
+        <motion.div variants={itemVariants} className="flex flex-col form-control">
+          <div
+            className={`${errors.budget ? "tooltip tooltip-open tooltip-error" : ""}`}
+            data-tip={errors.budget}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {SelectBudgetOptions.map((option) => (
+                <motion.div
+                  whileHover={{ scale: 1.03, y: -5 }}
+                  whileTap={{ scale: 0.98 }}
+                  key={option.id}
+                  onClick={() => handleCardClick("budget", option.value)}
+                  className={`card cursor-pointer transition-all ${
+                    budget === option.value
+                      ? "ring-4 ring-primary ring-opacity-50 transform -translate-y-2"
+                      : "hover:shadow-lg"
+                  }`}
+                >
+                  <div className="items-center text-center p-4">
+                    <TiltedCard
+                      className="object-cover"
+                      imageSrc={option.icon}
+                      altText={option.description}
+                      captionText={option.label}
+                      containerHeight="200px"
+                      containerWidth="200px"
+                      imageHeight="200px"
+                      imageWidth="200px"
+                      rotateAmplitude={12}
+                      scaleOnHover={1}
+                      showMobileWarning={false}
+                      showTooltip={true}
+                      displayOverlayContent={true}
+                      overlayContent={
+                        <p className="tilted-card-demo-text">
+                          {option.label}
+                          <br />
+                          {option.description}
+                        </p>
+                      }
+                    />
+                  </div>
+                  {budget === option.value && (
+                    <div className="absolute bottom-2 left-0 right-0 flex justify-center">
+                      <div className="badge badge-primary badge-lg">Selected</div>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="flex justify-between mt-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={prevStep}
+            className="btn btn-outline gap-2"
+          >
+            Back
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={nextStep}
+            className="btn btn-primary gap-2"
+          >
+            Next <ChevronRight size={18} />
+          </motion.button>
+        </div>
       </motion.div>
+    );
+  };
+
+  // Render step 3: Travel Group
+  const renderStep3 = () => {
+    return (
+      <motion.div
+        initial="initial"
+        animate="in"
+        exit="out"
+        variants={pageVariants}
+        transition={pageTransition}
+        className="space-y-8"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h2 className="text-2xl font-bold mb-2">Who's traveling with you?</h2>
+          <p className="opacity-75">Select your travel companions</p>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="flex flex-col form-control">
+          <div
+            className={`${errors.travelGroup ? "tooltip tooltip-open tooltip-error" : ""}`}
+            data-tip={errors.travelGroup}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {SelectTravelsList.map((option) => (
+                <motion.div
+                  whileHover={{ scale: 1.03, y: -5 }}
+                  whileTap={{ scale: 0.98 }}
+                  key={option.id}
+                  onClick={() => handleCardClick("travelGroup", option.value)}
+                  className={`cursor-pointer transition-all rounded ${
+                    travelGroup === option.value
+                      ? "ring-4 ring-primary ring-opacity-50 transform -translate-y-2"
+                      : "hover:shadow-lg"
+                  }`}
+                >
+                  <div className="items-center text-center p-4">
+                    <TiltedCard
+                      className="object-cover"
+                      imageSrc={option.icon}
+                      altText={option.description}
+                      captionText={option.label}
+                      containerHeight="150px"
+                      containerWidth="150px"
+                      imageHeight="150px"
+                      imageWidth="150px"
+                      rotateAmplitude={12}
+                      scaleOnHover={1}
+                      showMobileWarning={false}
+                      showTooltip={true}
+                      displayOverlayContent={true}
+                      overlayContent={
+                        <p className="tilted-card-demo-text">
+                          {option.label}
+                          <br />
+                          {option.description}
+                        </p>
+                      }
+                    />
+                  </div>
+                  {travelGroup === option.value && (
+                    <div className="absolute bottom-2 left-0 right-0 flex justify-center">
+                      <div className="badge badge-primary badge-lg">Selected</div>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="flex justify-between mt-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={prevStep}
+            className="btn btn-outline gap-2"
+          >
+            Back
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={nextStep}
+            className="btn btn-primary gap-2"
+          >
+            Next <ChevronRight size={18} />
+          </motion.button>
+        </div>
+      </motion.div>
+    );
+  };
+
+  // Render step 4: Summary
+  const renderStep4 = () => {
+    const getImageForValue = (type, value) => {
+      if (type === "budget") {
+        return SelectBudgetOptions.find(option => option.value === value)?.icon || "";
+      } else if (type === "travelGroup") {
+        return SelectTravelsList.find(option => option.value === value)?.icon || "";
+      }
+      return "";
+    };
+
+    const getBudgetLabel = (value) => {
+      return SelectBudgetOptions.find(option => option.value === value)?.label || value;
+    };
+
+    const getTravelGroupLabel = (value) => {
+      return SelectTravelsList.find(option => option.value === value)?.label || value;
+    };
+
+    return (
+      <motion.div
+        initial="initial"
+        animate="in"
+        exit="out"
+        variants={pageVariants}
+        transition={pageTransition}
+        className="space-y-8"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h2 className="text-2xl font-bold mb-2">Your Trip Summary</h2>
+          <p className="opacity-75">Review your adventure details</p>
+        </motion.div>
+
+        <div className="card shadow-lg">
+          <div className="card-body">
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="flex flex-col md:flex-row items-center gap-4 mb-4"
+            >
+              <div className="avatar">
+                <div className="w-16 h-16 rounded-full mask mask-squircle flex items-center justify-center">
+                  <Globe size={32} className="text-primary" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">{destination?.label || "No destination selected"}</h3>
+                <p className="text-sm opacity-75">For {days} {days === "1" ? "day" : "days"}</p>
+              </div>
+            </motion.div>
+
+            <div className="divider"></div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex items-center gap-4"
+              >
+                <div className="avatar">
+                  <div className="w-16 h-16 rounded-lg">
+                    <img src={getImageForValue("budget", budget)} alt={budget} />
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold">Budget</h4>
+                  <p>{getBudgetLabel(budget)}</p>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center gap-4"
+              >
+                <div className="avatar">
+                  <div className="w-16 h-16 rounded-lg">
+                    <img src={getImageForValue("travelGroup", travelGroup)} alt={travelGroup} />
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold">Travel Group</h4>
+                  <p>{getTravelGroupLabel(travelGroup)}</p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-between mt-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={prevStep}
+            className="btn btn-outline gap-2"
+          >
+            Back
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleSubmit}
+            className="btn btn-primary gap-2"
+          >
+            <Plane size={18} /> Generate My Trip
+          </motion.button>
+        </div>
+      </motion.div>
+    );
+  };
+
+  const renderStepContent = () => {
+    switch (formStep) {
+      case 1:
+        return renderStep1();
+      case 2:
+        return renderStep2();
+      case 3:
+        return renderStep3();
+      case 4:
+        return renderStep4();
+      default:
+        return renderStep1();
+    }
+  };
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  return (
+    <div className="min-h-screen overflow-x-hidden py-10 px-4">
+      <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
+        {/* Form Side */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="lg:w-2/3 card shadow-2xl rounded-3xl overflow-hidden"
+        >
+          {/* Hero Banner */}
+          <div className="p-6 md:p-8 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full opacity-10">
+              <div className="absolute w-40 h-40 rounded-full top-4 right-4"></div>
+              <div className="absolute w-20 h-20 rounded-full bottom-4 left-10"></div>
+              <div className="absolute w-32 h-32 rounded-full right-1/3"></div>
+            </div>
+
+            <motion.div variants={itemVariants} className="relative z-10">
+              <h1 className="text-4xl font-bold mb-2 flex items-center">
+                <Plane className="w-8 h-8 mr-3 inline" /> Create Your Adventure
+              </h1>
+              <p className="text-lg opacity-90 max-w-lg">
+                Tell us your preferences, and we'll craft the perfect travel experience
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="divider my-0"></div>
+
+          {/* Progress indicator */}
+          <div className="px-6 pt-6">{renderProgressSteps()}</div>
+
+          {/* Form Content */}
+          <div className="p-6 md:p-8">{renderStepContent()}</div>
+        </motion.div>
+
+        {/* Map/Image Side with animation */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+          className="lg:w-1/3 hidden lg:block relative h-auto"
+        >
+          <div className="sticky top-10">
+            <div className="card shadow-2xl overflow-hidden">
+              <TiltedCard
+                className="object-cover"
+                imageSrc="https://i.pinimg.com/736x/f9/af/73/f9af73ea72f0f484bf2c9c00a7a1a1d2.jpg"
+                altText="Travel Adventure Map"
+                captionText="AI Trip Planner"
+                containerHeight="600px"
+                containerWidth="100%"
+                imageHeight="100%"
+                imageWidth="100%"
+                rotateAmplitude={12}
+                scaleOnHover={1.05}
+                showMobileWarning={false}
+                showTooltip={true}
+                displayOverlayContent={true}
+                overlayContent={
+                  <div className="flex flex-col items-center">
+                    <h3 className="text-2xl font-bold">Discover Amazing Places</h3>
+                    <p className="mt-2">Your adventure awaits</p>
+                  </div>
+                }
+              />
+            </div>
+
+            {/* Travel stat cards */}
+            {destination && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="mt-6 card shadow-md p-4"
+              >
+                <div className="stat">
+                  <div className="stat-title">Selected Destination</div>
+                  <div className="stat-value text-xl">{destination?.label}</div>
+                  <div className="stat-desc">Start your journey today!</div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
+      </div>
     </div>
-      )
-    
   );
 }
