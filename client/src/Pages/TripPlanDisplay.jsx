@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaStar, FaMapMarkerAlt, FaClock, FaDollarSign, FaSun, FaLandmark, FaMap, FaCloudSun } from "react-icons/fa";
-import { useParams, useNavigate } from "react-router-dom";
+import { FaStar, FaMapMarkerAlt, FaClock, FaDollarSign, FaSun, FaLandmark, FaMap, FaCloudSun, FaBuilding } from "react-icons/fa";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { PlanContext } from "../components/context/TripContext";
 import { axiosInstance } from "../components/Axios/axios";
 import Loader from "../components/Other/Loader";
@@ -134,7 +134,10 @@ const TripPlanDisplay = () => {
   }
 
   const { tripDetails, generatedPlan } = tripPlan;
+  console.log("Trip Details:", tripDetails);
+  console.log("Generated Plan:", generatedPlan);
   const { hotelOptions, itinerary } = generatedPlan;
+  console.log(hotelOptions)
 
   return (
     <div className="max-h-screen overflow-x-hidden relative">
@@ -171,6 +174,7 @@ const TripPlanDisplay = () => {
             </div>
           </div>
         </motion.section>
+     
 
         {/* Trip Details */}
         <motion.section
@@ -249,6 +253,10 @@ const TripPlanDisplay = () => {
                         variants={buttonVariants}
                         whileHover="hover"
                         whileTap="tap"
+                        onClick={() => {
+                          const address = encodeURIComponent(hotel.hotelAddress || tripDetails.location);
+                          window.open(`https://www.booking.com/searchresults.en-gb.html?aid=8020813&amp;ss=${address}`, "_blank");
+                        }}
                       >
                         Book Now
                       </motion.button>
@@ -273,6 +281,62 @@ const TripPlanDisplay = () => {
             )}
           </motion.div>
         </section>
+
+
+
+{/* More Options of Hotel */}
+<motion.section
+  className="card bg-base-100 shadow-xl mb-10 rounded-2xl border border-base-300 overflow-hidden"
+  initial={{ opacity: 0, y: -50 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, ease: "easeOut" }}
+>
+  <div className="card-body p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
+    <FaBuilding className="text-4xl text-purple-600" />
+    <div className="flex items-center justify-between flex-1">
+     <div>
+     <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+        Find More Options in{" "}
+        <span className="text-purple-600">
+          {tripDetails?.location || "N/A"}
+        </span>
+      </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+        Discover the best hotel deals and stays tailored for your trip.
+      </p>
+     </div>
+      <Link
+        to={`https://www.booking.com/searchresults.en-gb.html?aid=8020813&ss=${tripDetails?.location}`}
+        className="inline-flex items-center gap-2 w-fit bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm px-4 py-2 rounded-lg transition duration-300"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Find Hotels
+        <svg
+          className="h-4 w-4"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 10"
+        >
+          <path
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M1 5h12m0 0L9 1m4 4L9 9"
+          />
+        </svg>
+      </Link>
+    </div>
+  </div>
+</motion.section>
+
+
+      
+
+
+
 
         {/* Itinerary */}
         <section>
