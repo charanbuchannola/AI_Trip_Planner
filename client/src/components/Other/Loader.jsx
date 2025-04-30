@@ -6,7 +6,7 @@ const Loader = () => (
   // the component will fill the height/width of its parent container, edit the CSS to change this
   // the options below are the default values
   
- <div className="h-screen overflow-hidden w-screen">
+ <div className="h-screen overflow-hidden md:-mt-40 w-screen">
    <Hyperspeed
     effectOptions={{
       onSpeedUp: () => { },
@@ -46,8 +46,11 @@ const Loader = () => (
       }
     }}
   />
-  <div className=" absolute  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-center mt-4 text-white">
-  </div>
+  {/* <div className=" absolute  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-center mt-4 ">
+    <h1 className="text-2xl font-bold text-center text-blue-700">🧭 AI Trip Planner</h1>
+    <p>Loading...</p>
+    <p>We are preparing your trip</p>
+  </div> */}
  </div>
 );
 

@@ -138,6 +138,24 @@ const TripPlanDisplay = () => {
   const { hotelOptions, itinerary } = generatedPlan;
   console.log(hotelOptions)
 
+  const formatToINR = (priceStr) => {
+    const exchangeRate = 83.5;
+  
+    if (typeof priceStr !== "string") return "N/A";
+  
+    // Extract numbers using RegExp
+    const matches = priceStr.match(/\d+/g); // gets ["10", "20"]
+    if (!matches || matches.length === 0) return "N/A";
+  
+    // Use average or minimum price
+    const numericPrice = (parseInt(matches[0]) + (parseInt(matches[1]) || 0)) / (matches[1] ? 2 : 1);
+  
+    const inrPrice = numericPrice * exchangeRate;
+    return inrPrice.toLocaleString("en-IN", {
+      style: "currency",
+      currency: "INR",
+    });
+  };
   return (
     <div className="max-h-screen overflow-x-hidden relative">
       <div className="max-w-7xl mt-15 mx-auto py-12 px-6">
@@ -220,7 +238,7 @@ const TripPlanDisplay = () => {
                       <FaMapMarkerAlt className="mr-2" /> {hotel.hotelAddress || "N/A"}
                     </p>
                     <p className="font-semibold text-lg  flex items-center">
-                      <FaDollarSign className="mr-2" /> {hotel.price || "N/A"}
+                      {formatToINR(hotel.price)}
                     </p>
                     <p className="text-sm  line-clamp-2">{hotel.description || "No description available"}</p>
                     <div className="card-actions flex justify-between">
@@ -267,8 +285,8 @@ const TripPlanDisplay = () => {
 >
   <div className="card-body p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
     <FaBuilding className="text-4xl text-purple-600" />
-    <div className="flex items-center justify-between flex-1">
-     <div>
+    <div className="md:flex items-center justify-between flex-1">
+     <div className="">
      <h3 className="text-2xl font-bold   mb-2">
         Find More Options in{" "}
         <span className="text-purple-600">
@@ -307,7 +325,7 @@ const TripPlanDisplay = () => {
 </motion.section>
         {/* Itinerary */}
         <section>
-        <div className="flex items-center justify-between ">
+        <div className="md:flex items-center justify-between ">
         <h2 className="text-4xl font-extrabold mb-8 flex items-center">
             <FaClock className="mr-3" /> Your Itinerary 📅
           </h2>
@@ -316,7 +334,7 @@ const TripPlanDisplay = () => {
   onClick={downloadItinerary}
   variants={buttonVariants}
   whileTap="tap"
-  className="btn hover:scale-105 transition-all duration-200 animate-bounce  mt-4"
+  className="btn bg-primary/20 hover:scale-105 transition-all duration-200 animate-bounce  mt-4"
 >
   Download Itinerary 📄
 </motion.button>

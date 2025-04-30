@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { Send } from "lucide-react";
 
 const intentButtons = [
   { label: "🔁 Reset Password", message: "How can I reset my password?" },
@@ -150,14 +151,17 @@ function Chat() {
         </div>
 
         {/* Intent Buttons */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+        <div className="grid grid-cols-5 md:grid-cols-5 gap-2">
           {intentButtons.map((btn, i) => (
             <button
               key={i}
               onClick={() => handleSend(btn.message)}
               className="text-xs  border hover:bg-gray-100  rounded shadow-sm"
-            >
-              {btn.label}
+            > 
+
+<p className="hidden sm:inline">{btn.label}</p>
+<p className="inline sm:hidden">{btn.label.trim()[0]}</p>
+            
             </button>
           ))}
         </div>
@@ -165,6 +169,12 @@ function Chat() {
         {/* Input + Controls */}
         <div className="flex items-center gap-2">
           <input
+           onKeyUp={(e) => {
+            if (e.key =="Enter") {
+              console.log(e.key)
+              handleSend();
+            }
+          }}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className="flex-1 p-2 border rounded-lg text-sm"
@@ -172,13 +182,16 @@ function Chat() {
           />
           <button
             onClick={() => handleSend()}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+           
+            className="md:bg-blue-600 md:hover:bg-blue-700 text-white md:px-4 md:py-2 rounded-lg"
           >
-            Send
+            <Send className="hidden sm:inline"/>
+            <span className="className="hidden sm:inline >Send</span>
+
           </button>
           <button
             onClick={startListening}
-            className={`text-white px-3 py-2 rounded-lg ${
+            className={`text-white md:px-3 md:py-2 rounded-lg ${
               listening ? "bg-red-500" : "bg-green-600"
             }`}
             title="Start Listening"

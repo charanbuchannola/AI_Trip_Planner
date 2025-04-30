@@ -254,7 +254,7 @@ export default function EnhancedTravelForm() {
     }),
     placeholder: (provided) => ({
       ...provided,
-      fontSize: "1em",
+      fontSize: "0.8em",
       color: "#fffff", // Slate-400 for placeholder
     }),
     input: (provided) => ({
@@ -296,7 +296,7 @@ export default function EnhancedTravelForm() {
   const renderProgressSteps = () => {
     return (
       <div className="w-full flex justify-center mb-6">
-        <ul className="steps steps-horizontal w-full max-w-md">
+        <ul className="steps md:text-sm text-xs steps-horizontal w-full max-w-md">
           <li className={`step ${formStep >= 1 ? "step-primary" : ""}`}>
             Destination
           </li>
@@ -350,7 +350,7 @@ export default function EnhancedTravelForm() {
               }`}
               data-tip={errors.destination}
             >
-               <div className="relative w-full">
+               <div className=" mt-2 relative w-full">
       <div className="flex items-center w-full border border-gray-200  rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
         <div className="flex-shrink-0 pl-3 text-gray-400">
           <Search size={18} />
@@ -390,11 +390,12 @@ export default function EnhancedTravelForm() {
             <span className="label-text text-lg flex items-center">
               <Calendar className="w-5 h-5 mr-2 text-blue-500" />
               Duration
+              <span className="inline ml-2 sm:hidden"> in days</span>
             </span>
           </label>
 
           <div
-            className={`relative w-full ${errors.days ? "tooltip tooltip-open tooltip-error" : ""}`}
+            className={`relative  mt-2 w-full ${errors.days ? "tooltip tooltip-open tooltip-error" : ""}`}
             data-tip={errors.days}
           >
             <div className="flex flex-wrap gap-3 justify-center">
@@ -409,11 +410,11 @@ export default function EnhancedTravelForm() {
                   }}
                   className={`btn btn-circle hover:scale-105 transition-all delay-150 duration-300 ${
                     days === (index + 1).toString() ? "btn-primary" : "btn-outline"
-                  } w-16 h-16`}
+                  } md:w-16 md:h-16`}
                 >
-                  <div className="flex flex-col items-center">
-                    <span className="text-xl font-bold">{index + 1}</span>
-                    <span className="text-xs">{index === 0 ? "day" : "days"}</span>
+                  <div className="flex md:flex-col items-center">
+                    <span className="md:text-xl   font-bold">{index + 1}</span>
+                    <span className=" hidden sm:inline text-xs">{index === 0 ? "day" : "days"}</span>
                   </div>
                 </motion.button>
               ))}
@@ -551,7 +552,7 @@ export default function EnhancedTravelForm() {
             className={`${errors.travelGroup ? "tooltip tooltip-open tooltip-error" : ""}`}
             data-tip={errors.travelGroup}
           >
-            <div className="grid grid-cols-2  sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-4 gap-2 md:gap-6">
               {SelectTravelsList.map((option) => (
                 <motion.div
                   whileHover={{ scale: 1.03, y: -5 }}
@@ -725,7 +726,7 @@ export default function EnhancedTravelForm() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleSubmit}
-            className="btn btn-primary gap-2"
+            className="btn btn-primary gap-2  ml-2"
           >
             <Plane size={18} /> Generate My Trip
           </motion.button>
