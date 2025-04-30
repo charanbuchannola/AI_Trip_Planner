@@ -6,6 +6,11 @@ const { AI_PROMPT } = require("../utils/options");
 
 const { fetchPlacePhoto } = require("../utils/fetchPlacePhoto"); // your helper function
 
+
+
+
+
+
 module.exports.createTrip = async (req, res) => {
   try {
     const { destination, days, budget, travelGroup } = req.body;
